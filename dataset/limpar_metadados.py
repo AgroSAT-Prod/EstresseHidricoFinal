@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Corrige inconsistencias de metadados em Unificada13052026.csv.
 
-Tres inconsistencias identificadas na coluna de metadados (a leitura
+Quatro inconsistencias identificadas na coluna de metadados (a leitura
 espectral em si nunca e alterada):
 
 1. `bloco` misto maiuscula/minuscula: as 192 linhas do bloco de recuperacao
@@ -18,6 +18,14 @@ espectral em si nunca e alterada):
    genotipo foi gravado como "C202" em vez de "CD202" (a coluna `genotipo`
    nessas linhas ja estava correta).
 
+4. `condicao` errada em 16 linhas, mesmo efeito de fill-down do caso 2:
+   `B2_CD202_NIRRIG_REPROD00000-07` (D04M) e `B4_EMB48_NIRR_REP_RECUP00000-07`
+   (D09T) aparecem como "IRRIG" repetindo a condicao do grupo anterior, embora
+   `nomenclaura` identifique as duas series como nao irrigadas. O token de
+   condicao varia entre as duas fases do experimento -- `IRRIG`/`NIRRIG` nos
+   arquivos REPROD e a forma abreviada `IRR`/`NIRR` nos arquivos RECUP --,
+   entao ambas as grafias sao normalizadas antes da comparacao.
+
 Em todos os casos, `nomenclaura` (nome do arquivo .asd original) e a fonte
 confiavel usada para corrigir a coluna correspondente -- exceto no caso 3,
 em que o proprio `nomenclaura` e o campo com o erro de digitacao.
@@ -31,7 +39,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent
 ENTRADA = ROOT / "Unificada13052026.csv"
-SAIDA = ROOT / "Unificada13052026_limpa.csv"
+SAIDA = ROOT / "Unificada13052026_Limpa.csv"
 
 
 def limpar(df: pd.DataFrame) -> pd.DataFrame:
@@ -54,6 +62,18 @@ def limpar(df: pd.DataFrame) -> pd.DataFrame:
     )
     df.loc[divergente, "genotipo"] = genotipo_nomenclaura[divergente]
 
+    condicoes_validas = {
+        "IRRIG": "IRRIG",
+        "NIRRIG": "NIRRIG",
+        "IRR": "IRRIG",
+        "NIRR": "NIRRIG",
+    }
+    condicao_nomenclaura = tokens.str[2].map(condicoes_validas)
+    divergente = condicao_nomenclaura.notna() & (
+        condicao_nomenclaura != df["condicao"]
+    )
+    df.loc[divergente, "condicao"] = condicao_nomenclaura[divergente]
+
     return df
 
 
@@ -66,9 +86,11 @@ def main() -> None:
     n_bloco = (df["bloco"] != df_limpo["bloco"]).sum()
     n_genotipo = (df["genotipo"] != df_limpo["genotipo"]).sum()
     n_nomenclaura = (df["nomenclaura"] != df_limpo["nomenclaura"]).sum()
+    n_condicao = (df["condicao"] != df_limpo["condicao"]).sum()
     print(f"bloco corrigido em {n_bloco} linhas (minusculo -> maiusculo)")
     print(f"genotipo corrigido em {n_genotipo} linhas (divergia de nomenclaura)")
     print(f"nomenclaura corrigido em {n_nomenclaura} linhas (typo C202 -> CD202)")
+    print(f"condicao corrigida em {n_condicao} linhas (divergia de nomenclaura)")
 
     df_limpo.to_csv(SAIDA, sep=";", index=False)
     print(f"Salvo em {SAIDA}")
