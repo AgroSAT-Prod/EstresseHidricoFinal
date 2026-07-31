@@ -1,0 +1,74 @@
+%% Pipeline dos efeitos simples: do CSV bruto ate as tabelas de
+%% "% de bandas em que dois genotipos diferem", dentro de IRRIG e de NIRRIG.
+%% Codigo: interacao_genotipo_condicao.py (efeito_simples, resumir)
+flowchart TD
+    A["dataset/Unificada13052026_Limpa.csv<br/>1924 leituras x 2151 bandas, 350-2500 nm"]
+
+    subgraph PRE["1 - Pre-processamento - shapiro_normalidade.carregar"]
+        direction TB
+        B["Recorte espectral<br/>400-2450 nm, 2051 bandas"]
+        C["Limpeza de espurios<br/>clip em 1e4, inf vira NaN"]
+        D["Jump correction, por linha<br/>emendas do ASD em 1000 e 1800 nm<br/>deslocamento aditivo ancorado no VNIR"]
+        E["Interpolacao linear dos NaN<br/>com extrapolacao nas bordas"]
+        F["Savitzky-Golay<br/>janela 11 nm, polinomio ordem 2"]
+        G["SNV por amostra<br/>x menos media, dividido pelo desvio<br/>remove magnitude, preserva forma"]
+        H["Filtro turno igual a manha<br/>1348 leituras"]
+        B --> C --> D --> E --> F --> G --> H
+    end
+
+    A --> B
+
+    H --> LOOP{{"Para cada dia D02..D10<br/>x cada par de genotipos<br/>x cada condicao<br/>= 42 combinacoes"}}
+
+    subgraph SUB["2 - Recorte do subconjunto - efeito_simples"]
+        direction TB
+        I["mask = condicao igual ao nivel<br/>E genotipo em par"]
+        J["64 leituras<br/>32 de cada genotipo<br/>excecao: 68 em duas celulas de D09"]
+        I --> J
+    end
+
+    LOOP --> I
+
+    subgraph TESTE["3 - Teste banda a banda, 2051 bandas - os dois sao calculados"]
+        direction TB
+        K["rankdata eixo 0<br/>postos DENTRO do subconjunto<br/>empates pela media"]
+        L["correcao_empates<br/>soma de t ao cubo menos t"]
+        M["kruskal_vetorizado<br/>H corrigido por empates<br/>p = chi2.sf de H, gl 1"]
+        MW["mannwhitney_por_banda<br/>metodo EXATO quando nao ha empates<br/>enumera a distribuicao nula de U"]
+        EQ(["KW com 2 grupos = MW assintotico<br/>sem correcao de continuidade:<br/>H = z ao quadrado<br/>a diferenca e so exato vs assintotico"])
+        O["fdr_bh em cada teste<br/>Benjamini-Hochberg<br/>familia = as 2051 bandas"]
+        P["significativa = q menor que alfa<br/>alfa em 0.05, 0.01 e 0.001<br/>q do teste ativo: TESTE_EFEITO_SIMPLES"]
+        K --> M
+        L --> M
+        M --> EQ
+        MW --> EQ
+        M --> O
+        MW --> O
+        O --> P
+    end
+
+    J --> K
+    J --> L
+    J --> MW
+
+    subgraph EFEITO["Tamanho de efeito, em paralelo"]
+        direction TB
+        Q["cliff_delta<br/>2U dividido por na vezes nb, menos 1"]
+        R["epsilon_quadrado<br/>H menos k mais 1, sobre n menos k"]
+    end
+
+    K --> Q
+    M --> R
+
+    P --> S["dataset_gerado/efeitos_simples.csv<br/>86.142 linhas = 42 x 2051"]
+    Q --> S
+    R --> S
+
+    S --> T["resumir<br/>groupby dia, par, condicao<br/>media da coluna significativa"]
+    T --> U["dataset_gerado/interacao_resumo.csv<br/>prop_sig_IRRIG e prop_sig_NIRRIG"]
+    U --> V["As duas tabelas<br/>3 pares x 7 dias, por condicao"]
+
+    classDef dado fill:#e8eef7,stroke:#1a3a6b,color:#1a1a19
+    classDef saida fill:#d6e6d3,stroke:#1b6b3a,color:#1a1a19
+    class A,S,U dado
+    class V saida
