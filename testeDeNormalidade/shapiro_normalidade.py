@@ -5,6 +5,11 @@ Reaplica o pipeline de `preprocessamento_espectral` em memória (recorte
 400-2450 nm + jump correction + interpolação -> Savitzky-Golay -> SNV) e testa,
 para cada banda, se a distribuição dos valores entre as amostras é normal.
 
+Apenas o turno da manhã entra na análise: só 3 dos 7 dias têm coleta de tarde,
+então misturar turnos injetaria variação diurna nos grupos e contaminaria o
+teste de normalidade com uma mistura de duas populações (bimodalidade
+artificial). Mesma restrição adotada em `analiseTemporalBandas`.
+
 A avaliação é feita em cinco níveis de agrupamento:
 1. global      - todas as amostras juntas
 2. genotipo    - BR16, CD202, EMB48
@@ -51,6 +56,9 @@ ESTAGIO_PADRAO = "normalizado"
 ALPHA = 0.05
 MIN_N = 3
 
+# Único turno presente em todos os sete dias.
+TURNO = "manha"
+
 AGRUPAMENTOS: dict[str, list[str]] = {
     "global": [],
     "genotipo": ["genotipo"],
@@ -60,8 +68,19 @@ AGRUPAMENTOS: dict[str, list[str]] = {
 }
 
 
-def carregar(estagio: str) -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:
-    """Lê o dataset limpo e aplica o pré-processamento até o estágio pedido."""
+def carregar(
+    estagio: str,
+    turno: str | None = None,
+) -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:
+    """Lê o dataset limpo e aplica o pré-processamento até o estágio pedido.
+
+    Args:
+        estagio: até onde levar o pré-processamento.
+        turno: quando dado, restringe as amostras a esse turno. Só 3 dos 7 dias
+            têm coleta de tarde, então manter os dois turnos deixa D02, D03 e
+            D09 com o dobro de leituras dos demais dias -- desbalanceamento que
+            cai justamente sobre o fator dia.
+    """
     if estagio not in ESTAGIOS:
         raise SystemExit(f"Estágio inválido: {estagio!r}. Use um de {ESTAGIOS}.")
 
@@ -80,7 +99,50 @@ def carregar(estagio: str) -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:
     meta = df_pre[[c for c in df_pre.columns if not c.isdigit()]].copy()
     meta["dia"] = meta["data_coleta"].astype(str).str.extract(r"^(D\d+)")
 
+    if turno is not None:
+        mask = (meta["turno"] == turno).to_numpy()
+        if not mask.any():
+            raise SystemExit(f"Nenhuma amostra no turno {turno!r}.")
+        meta = meta[mask].reset_index(drop=True)
+        espectro = espectro[mask]
+
     return meta, espectro, w
+
+
+def carregar_estagios(
+    turno: str | None = None,
+) -> tuple[pd.DataFrame, dict[str, np.ndarray], np.ndarray]:
+    """Devolve os três estágios do pré-processamento de um único passe.
+
+    `carregar` refaz o jump correction linha a linha a cada chamada, e esse
+    laço domina o tempo de execução. Quem precisa comparar estágios -- os
+    scripts de figura -- deve usar esta função em vez de chamar `carregar`
+    uma vez por estágio.
+    """
+    df = pd.read_csv(ENTRADA, sep=";", decimal=",")
+    df.columns = [c.strip() for c in df.columns]
+
+    df_pre, w = preprocessar(df)
+    bandas_str = [str(int(b)) for b in w]
+
+    recortado = df_pre[bandas_str].values.astype(float)
+    suavizado = savitzky_golay(recortado)
+    normalizado = snv(suavizado)
+
+    meta = df_pre[[c for c in df_pre.columns if not c.isdigit()]].copy()
+    meta["dia"] = meta["data_coleta"].astype(str).str.extract(r"^(D\d+)")
+
+    mask = np.ones(len(meta), dtype=bool)
+    if turno is not None:
+        mask = (meta["turno"] == turno).to_numpy()
+        meta = meta[mask].reset_index(drop=True)
+
+    estagios = {
+        "recortado": recortado[mask],
+        "suavizado": suavizado[mask],
+        "normalizado": normalizado[mask],
+    }
+    return meta, estagios, w
 
 
 def shapiro_por_banda(espectro: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -183,8 +245,14 @@ def main() -> None:
     SAIDA_DIR.mkdir(parents=True, exist_ok=True)
 
     print(f"Estágio de pré-processamento: {estagio}")
-    meta, espectro, w = carregar(estagio)
-    print(f"{len(meta)} amostras x {len(w)} bandas "
+    meta, espectro, w = carregar(estagio, turno=TURNO)
+
+    # Savitzky-Golay e SNV agem linha a linha, então filtrar depois do
+    # pré-processamento não altera os valores das amostras mantidas.
+    mask = (meta["turno"] == TURNO).to_numpy()
+    meta = meta[mask].reset_index(drop=True)
+    espectro = espectro[mask]
+    print(f"{len(meta)} amostras do turno '{TURNO}' x {len(w)} bandas "
           f"({LIMITE_INF}-{LIMITE_SUP} nm)\n")
 
     resumos = []
