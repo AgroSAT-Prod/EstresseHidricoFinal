@@ -48,6 +48,10 @@ ESTAGIO_PADRAO = "normalizado"
 
 ALPHA = 0.05
 
+# Único turno presente em todos os sete dias. Com manhã e tarde juntas, D02,
+# D03 e D09 entrariam com o dobro de leituras dos demais dias.
+TURNO = "manha"
+
 GENOTIPOS = ["BR16", "CD202", "EMB48"]
 CONDICOES = ["IRRIG", "NIRRIG"]
 
@@ -350,8 +354,8 @@ def main() -> None:
     SAIDA_DIR.mkdir(parents=True, exist_ok=True)
 
     print(f"Estágio de pré-processamento: {estagio}")
-    meta, espectro, w = carregar(estagio)
-    print(f"{len(meta)} amostras x {len(w)} bandas\n")
+    meta, espectro, w = carregar(estagio, turno=TURNO)
+    print(f"{len(meta)} amostras do turno '{TURNO}' x {len(w)} bandas\n")
 
     resultados = []
     resultados_dunn = []

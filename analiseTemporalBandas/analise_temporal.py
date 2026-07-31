@@ -520,11 +520,7 @@ def main() -> None:
     SAIDA_DIR.mkdir(parents=True, exist_ok=True)
 
     print(f"Estágio de pré-processamento: {estagio}")
-    meta, espectro, w = carregar(estagio)
-
-    mask = (meta["turno"] == TURNO).to_numpy()
-    meta = meta[mask].reset_index(drop=True)
-    espectro = espectro[mask]
+    meta, espectro, w = carregar(estagio, turno=TURNO)
     print(f"{len(meta)} amostras do turno '{TURNO}' x {len(w)} bandas")
 
     Y, unidades, dias = montar_painel(meta, espectro)

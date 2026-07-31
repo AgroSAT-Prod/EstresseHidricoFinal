@@ -85,6 +85,9 @@ TEMPORAL = (
 
 ESTAGIO_PADRAO = "normalizado"
 
+# Mesmo recorte dos módulos que fornecem os critérios de significância.
+TURNO = "manha"
+
 ALVO = "condicao"
 CLASSE_POSITIVA = "NIRRIG"
 
@@ -305,8 +308,8 @@ def main() -> None:
     SAIDA_DIR.mkdir(parents=True, exist_ok=True)
 
     print(f"Estágio de pré-processamento: {estagio}")
-    meta, espectro, w = carregar(estagio)
-    print(f"{len(meta)} amostras x {len(w)} bandas")
+    meta, espectro, w = carregar(estagio, turno=TURNO)
+    print(f"{len(meta)} amostras do turno '{TURNO}' x {len(w)} bandas")
 
     mask, tem_reducao = carregar_bandas_representativas(w)
     if not tem_reducao:

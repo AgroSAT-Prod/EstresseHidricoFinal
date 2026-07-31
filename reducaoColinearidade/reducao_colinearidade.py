@@ -60,6 +60,10 @@ DIFERENCAS = (
 
 ESTAGIO_PADRAO = "normalizado"
 
+# Mesmo recorte dos módulos de teste, para que os representantes escolhidos
+# descrevam a colinearidade das amostras que de fato entram nas análises.
+TURNO = "manha"
+
 LIMIAR_R = 0.80
 JANELA_NM = 10.0
 
@@ -241,8 +245,8 @@ def main() -> None:
     SAIDA_DIR.mkdir(parents=True, exist_ok=True)
 
     print(f"Estágio de pré-processamento: {estagio}")
-    meta, espectro, w = carregar(estagio)
-    print(f"{len(meta)} amostras x {len(w)} bandas\n")
+    meta, espectro, w = carregar(estagio, turno=TURNO)
+    print(f"{len(meta)} amostras do turno '{TURNO}' x {len(w)} bandas\n")
 
     print("Correlação de Spearman entre todas as bandas...")
     corr = spearman_matriz(espectro)

@@ -223,7 +223,8 @@ def gerar_painel(
 
     fig.suptitle(
         "Teste de normalidade (Shapiro-Wilk banda a banda) - "
-        "espectro pre-processado / normalizado",
+        "espectro pre-processado / normalizado\n"
+        "Somente turno da manha (unico presente nos sete dias)",
         fontsize=14,
         fontweight="bold",
         y=0.98,
