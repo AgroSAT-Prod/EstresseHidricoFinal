@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import sys
 from collections.abc import Callable
 from pathlib import Path
 
@@ -31,11 +30,13 @@ SCRIPTS_DIR = Path(__file__).resolve().parent
 CLASSIFICACAO_DIR = SCRIPTS_DIR.parent
 PROJECT_ROOT = CLASSIFICACAO_DIR.parent
 
-sys.path.insert(0, str(PROJECT_ROOT / "testeDeNormalidade"))
-
-from shapiro_normalidade import carregar  # noqa: E402
-
 SAIDA_DIR = CLASSIFICACAO_DIR / "outputs"
+DATASET_DIR = PROJECT_ROOT / "dataset"
+DATASETS_PREPROCESSADOS = {
+    "recortado": DATASET_DIR / "Unificada13052026_400_2450.csv",
+    "suavizado": DATASET_DIR / "Unificada13052026_suavizado.csv",
+    "normalizado": DATASET_DIR / "Unificada13052026_normalizado.csv",
+}
 TOP5_GERAL_PATH = PROJECT_ROOT / "selecaoVariaveis" / "dataset_gerado" / "top5_bandas.csv"
 BANDAS_GENOTIPO_DIR = PROJECT_ROOT / "dataset" / "dataset_gerado"
 
@@ -132,6 +133,31 @@ def carregar_bandas_por_genotipo(genotipo: str) -> list[int]:
     return df.sort_values("rank")["banda_nm"].astype(int).head(TOP_K).tolist()
 
 
+def carregar_dataset_preprocessado(estagio: str) -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:
+    caminho = DATASETS_PREPROCESSADOS.get(estagio)
+    if caminho is None:
+        raise ValueError(f"Estagio invalido: {estagio!r}. Use um de {tuple(DATASETS_PREPROCESSADOS)}.")
+    if not caminho.exists():
+        raise FileNotFoundError(
+            f"Dataset preprocessado nao encontrado: {caminho}. "
+            "Execute os scripts em preprocessamento_espectral antes da classificacao."
+        )
+
+    df = pd.read_csv(caminho, sep=";")
+    df.columns = [c.strip() for c in df.columns]
+
+    bandas = sorted(int(c) for c in df.columns if c.isdigit())
+    bandas_str = [str(banda) for banda in bandas]
+    meta = df[[c for c in df.columns if not c.isdigit()]].copy()
+    if "dia" not in meta.columns and "data_coleta" in meta.columns:
+        meta["dia"] = meta["data_coleta"].astype(str).str.extract(r"^(D\d+)")
+
+    espectro = df[bandas_str].apply(pd.to_numeric, errors="raise").to_numpy(dtype=float)
+    w = np.array(bandas, dtype=float)
+
+    return meta, espectro, w
+
+
 def selecionar_colunas(espectro: np.ndarray, w: np.ndarray, bandas: list[int]) -> np.ndarray:
     banda_para_coluna = {int(banda): i for i, banda in enumerate(w.astype(int))}
     ausentes = [banda for banda in bandas if banda not in banda_para_coluna]
@@ -143,7 +169,7 @@ def selecionar_colunas(espectro: np.ndarray, w: np.ndarray, bandas: list[int]) -
 
 
 def montar_cenarios(modo: str, estagio: str) -> list[dict[str, object]]:
-    meta, espectro, w = carregar(estagio)
+    meta, espectro, w = carregar_dataset_preprocessado(estagio)
     cenarios: list[dict[str, object]] = []
 
     if modo in ("agrupado", "ambos"):
@@ -390,6 +416,7 @@ def avaliar_cenario(
             "modo": modo,
             "genotipo": genotipo,
             "estagio_preprocessamento": estagio,
+            "dataset_entrada": str(DATASETS_PREPROCESSADOS[estagio].relative_to(PROJECT_ROOT)),
             "alvo": ALVO,
             "classe_positiva": CLASSE_POSITIVA,
             "bandas_nm": ", ".join(str(b) for b in bandas),

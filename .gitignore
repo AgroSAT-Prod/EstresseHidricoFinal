@@ -2,3 +2,8 @@
 venv/
 __pycache__/
 *.pyc
+
+# Heavy preprocessed spectral datasets generated locally.
+dataset/Unificada13052026_400_2450.csv
+dataset/Unificada13052026_suavizado.csv
+dataset/Unificada13052026_normalizado.csv

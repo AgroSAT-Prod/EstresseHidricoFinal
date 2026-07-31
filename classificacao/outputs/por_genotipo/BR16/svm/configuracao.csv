@@ -1,2 +1,2 @@
-modelo;modo;genotipo;estagio_preprocessamento;alvo;classe_positiva;bandas_nm;estrategia_validacao;grupo_validacao;k_folds;amostras;semente
-svm;por_genotipo;BR16;normalizado;condicao;NIRRIG;1560, 400, 719, 2039, 520;StratifiedGroupKFold;nomenclaura;5;640;42
+modelo;modo;genotipo;estagio_preprocessamento;dataset_entrada;alvo;classe_positiva;bandas_nm;estrategia_validacao;grupo_validacao;k_folds;amostras;semente
+svm;por_genotipo;BR16;normalizado;dataset\Unificada13052026_normalizado.csv;condicao;NIRRIG;1560, 400, 719, 2039, 520;StratifiedGroupKFold;nomenclaura;5;640;42

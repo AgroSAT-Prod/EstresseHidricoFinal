@@ -11,6 +11,16 @@ O alvo usado pelos modelos é a coluna `condicao`, com `NIRRIG` como classe posi
 
 Treinar e avaliar modelos de classificação usando apenas bandas hiperspectrais previamente selecionadas pelos testes estatísticos do projeto. A seleção das bandas não é refeita nesta pasta; os scripts apenas leem os CSVs de bandas já existentes e treinam os modelos com elas.
 
+## Dataset de entrada
+
+A classificação usa os CSVs espectrais já pré-processados na pasta `dataset/`. O arquivo usado depende da opção `--estagio`:
+
+- `recortado`: `dataset/Unificada13052026_400_2450.csv`
+- `suavizado`: `dataset/Unificada13052026_suavizado.csv`
+- `normalizado`: `dataset/Unificada13052026_normalizado.csv`
+
+O estágio padrão é `normalizado`. Portanto, por padrão, os modelos usam `dataset/Unificada13052026_normalizado.csv` como fonte dos valores das bandas.
+
 ## Modos de bandas
 
 A flag `--modo` define quais bandas entram no experimento:
