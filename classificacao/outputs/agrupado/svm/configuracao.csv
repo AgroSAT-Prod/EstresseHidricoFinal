@@ -1,0 +1,2 @@
+modelo;modo;genotipo;estagio_preprocessamento;alvo;classe_positiva;bandas_nm;estrategia_validacao;grupo_validacao;k_folds;amostras;semente
+svm;agrupado;todos;normalizado;condicao;NIRRIG;401, 1939, 1356, 1843, 1385;StratifiedGroupKFold;nomenclaura;5;1924;42

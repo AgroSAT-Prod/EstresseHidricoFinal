@@ -1,0 +1,6 @@
+modelo;modo;genotipo;fold;kernel;C;gamma;n_support_IRRIG;n_support_NIRRIG
+svm;por_genotipo;CD202;1;rbf;1.0;scale;84;84
+svm;por_genotipo;CD202;2;rbf;1.0;scale;85;80
+svm;por_genotipo;CD202;3;rbf;1.0;scale;84;82
+svm;por_genotipo;CD202;4;rbf;1.0;scale;79;78
+svm;por_genotipo;CD202;5;rbf;1.0;scale;85;83

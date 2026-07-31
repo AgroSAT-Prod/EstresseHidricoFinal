@@ -1,0 +1,2 @@
+modelo;modo;genotipo;accuracy_media;accuracy_desvio;precision_media;precision_desvio;recall_media;recall_desvio;f1_score_media;f1_score_desvio;kappa_media;kappa_desvio;auc_roc_media;auc_roc_desvio
+pls_da;por_genotipo;EMB48;0.8623824576014536;0.03967298243919977;0.9061013188709479;0.04756105109694599;0.809375;0.04192627457812107;0.8547790633608816;0.041770512870125204;0.7247775980184746;0.0792337824632327;0.9246740564123377;0.04153484622831359

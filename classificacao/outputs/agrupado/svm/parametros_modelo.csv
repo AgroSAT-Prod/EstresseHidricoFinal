@@ -1,0 +1,6 @@
+modelo;modo;genotipo;fold;kernel;C;gamma;n_support_IRRIG;n_support_NIRRIG
+svm;agrupado;todos;1;rbf;1.0;scale;268;268
+svm;agrupado;todos;2;rbf;1.0;scale;258;264
+svm;agrupado;todos;3;rbf;1.0;scale;262;260
+svm;agrupado;todos;4;rbf;1.0;scale;265;264
+svm;agrupado;todos;5;rbf;1.0;scale;248;248
