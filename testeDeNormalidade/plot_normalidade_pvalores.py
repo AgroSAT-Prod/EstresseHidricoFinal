@@ -49,13 +49,6 @@ ROTULOS = {
     "dia": "dia",
     "genotipo_condicao_dia": "genotipo x condicao x dia",
 }
-N_TIPICO = {
-    "global": 1924,
-    "condicao": 962,
-    "genotipo": 641,
-    "dia": 277,
-    "genotipo_condicao_dia": 45,
-}
 CORES = {
     "global": "#404040",
     "genotipo": "#1b9e77",
@@ -63,6 +56,13 @@ CORES = {
     "dia": "#7570b3",
     "genotipo_condicao_dia": "#e7298a",
 }
+
+
+def carregar_n_tipico() -> dict[str, int]:
+    """n mediano por grupo em cada agrupamento (lido do resumo, nao fixado)."""
+    resumo = pd.read_csv(SAIDA_DIR / "normalidade_resumo.csv", sep=";")
+    mediana = resumo.groupby("agrupamento")["n_amostras"].median()
+    return {agr: int(round(mediana[agr])) for agr in AGRUPAMENTOS}
 
 
 def carregar_pvalores() -> dict[str, np.ndarray]:
@@ -76,7 +76,7 @@ def carregar_pvalores() -> dict[str, np.ndarray]:
     return pvals
 
 
-def plot_histograma(ax: plt.Axes, agr: str, p: np.ndarray) -> None:
+def plot_histograma(ax: plt.Axes, agr: str, p: np.ndarray, n_tipico: int) -> None:
     """Histograma de p-valores de um agrupamento com referencia uniforme."""
     ax.hist(
         p,
@@ -102,7 +102,7 @@ def plot_histograma(ax: plt.Axes, agr: str, p: np.ndarray) -> None:
 
     prop_normal = float(np.mean(p > ALPHA)) * 100
     ax.set_title(
-        f"{ROTULOS[agr]}\nn~{N_TIPICO[agr]}  |  p>0.05: {prop_normal:.0f}%",
+        f"{ROTULOS[agr]}\nn~{n_tipico}  |  p>0.05: {prop_normal:.0f}%",
         fontsize=9,
         fontweight="bold",
     )
@@ -114,7 +114,11 @@ def plot_histograma(ax: plt.Axes, agr: str, p: np.ndarray) -> None:
         ax.legend(fontsize=6.5, loc="upper right")
 
 
-def plot_ecdf(ax: plt.Axes, pvals: dict[str, np.ndarray]) -> None:
+def plot_ecdf(
+    ax: plt.Axes,
+    pvals: dict[str, np.ndarray],
+    n_tipico: dict[str, int],
+) -> None:
     """ECDF dos p-valores por nivel, com a diagonal uniforme de referencia."""
     ax.plot([0, 1], [0, 1], color="black", linestyle="--", linewidth=1.0,
             alpha=0.6, label="Uniforme (se normal)")
@@ -123,7 +127,7 @@ def plot_ecdf(ax: plt.Axes, pvals: dict[str, np.ndarray]) -> None:
         p = np.sort(pvals[agr])
         y = np.arange(1, len(p) + 1) / len(p)
         ax.plot(p, y, color=CORES[agr], linewidth=1.6, alpha=0.9,
-                label=f"{ROTULOS[agr]} (n~{N_TIPICO[agr]})")
+                label=f"{ROTULOS[agr]} (n~{n_tipico[agr]})")
 
     ax.axvline(ALPHA, color="#d62728", linestyle=":", linewidth=1.0, alpha=0.8)
     ax.set_title(
@@ -141,7 +145,7 @@ def plot_ecdf(ax: plt.Axes, pvals: dict[str, np.ndarray]) -> None:
     ax.legend(fontsize=7, loc="lower right")
 
 
-def gerar_painel(pvals: dict[str, np.ndarray]) -> None:
+def gerar_painel(pvals: dict[str, np.ndarray], n_tipico: dict[str, int]) -> None:
     """Gera a figura: 5 histogramas + 1 ECDF."""
     plt.style.use("seaborn-v0_8-whitegrid")
 
@@ -151,13 +155,14 @@ def gerar_painel(pvals: dict[str, np.ndarray]) -> None:
     posicoes = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1)]
     for agr, (i, j) in zip(AGRUPAMENTOS, posicoes):
         ax = fig.add_subplot(gs[i, j])
-        plot_histograma(ax, agr, pvals[agr])
+        plot_histograma(ax, agr, pvals[agr], n_tipico[agr])
 
     ax_ecdf = fig.add_subplot(gs[1, 2])
-    plot_ecdf(ax_ecdf, pvals)
+    plot_ecdf(ax_ecdf, pvals, n_tipico)
 
     fig.suptitle(
-        "Distribuicao dos p-valores do Shapiro-Wilk por nivel de agrupamento\n"
+        "Distribuicao dos p-valores do Shapiro-Wilk por nivel de agrupamento "
+        "(somente turno da manha)\n"
         "Sob normalidade verdadeira seriam uniformes; o empilhamento em p~0 "
         "cresce com o n -> nao-normalidade e efeito de poder do teste",
         fontsize=13,
@@ -174,7 +179,8 @@ def gerar_painel(pvals: dict[str, np.ndarray]) -> None:
 def main() -> None:
     print("Gerando painel de p-valores do teste de normalidade...\n")
     pvals = carregar_pvalores()
-    gerar_painel(pvals)
+    n_tipico = carregar_n_tipico()
+    gerar_painel(pvals, n_tipico)
     print("Concluido.")
 
 
