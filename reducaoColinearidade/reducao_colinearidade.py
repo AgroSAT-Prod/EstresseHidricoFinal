@@ -22,16 +22,26 @@ Representante
 -------------
 Uma banda por grupo. Quando a saída de `testeDiferencaSignificativa` está
 disponível, o representante é a banda com o menor q para o efeito de condição
-(o melhor entre os dias) -- dentro de um grupo de bandas trocáveis, escolhe-se
-a que mais separa irrigado de não irrigado. Sem esse arquivo, o critério cai
-para o medoide: a banda mais correlacionada com as demais do grupo, ou seja,
-a que melhor resume o grupo.
+dentro do genótipo (o melhor entre os dias) -- dentro de um grupo de bandas
+trocáveis, escolhe-se a que mais separa irrigado de não irrigado. Sem esse
+arquivo, o critério cai para o medoide: a banda mais correlacionada com as
+demais do grupo, ou seja, a que melhor resume o grupo.
 
-Saídas
-------
-- `grupos_colinearidade.csv`   uma linha por banda, com seu grupo
-- `bandas_representativas.csv` uma linha por grupo, com o representante
-- `colinearidade_resumo.csv`   totais da redução
+Um genótipo, uma análise
+------------------------
+Tudo acima é feito uma vez por genótipo, sobre as amostras daquele genótipo
+apenas. Rodar no pool inteiro daria uma correlação marginal, com genótipo,
+condição e dia confundidos, e um único conjunto de representantes escolhido
+por um efeito de condição já marginalizado sobre genótipo -- os três materiais
+respondem ao estresse de forma bem diferente, e a banda que melhor resume uma
+região espectral em um deles não é necessariamente a dos outros.
+
+Saídas (uma pasta por genótipo)
+-------------------------------
+- `<GENOTIPO>/grupos_colinearidade.csv`   uma linha por banda, com seu grupo
+- `<GENOTIPO>/bandas_representativas.csv` uma linha por grupo, com o representante
+- `<GENOTIPO>/colinearidade_resumo.csv`   totais da redução do genótipo
+- `colinearidade_resumo.csv`              os totais dos três, lado a lado
 
 Uso:
     python reducao_colinearidade.py [recortado|suavizado|normalizado]
@@ -53,9 +63,12 @@ from shapiro_normalidade import carregar  # noqa: E402
 
 SAIDA_DIR = ROOT / "dataset_gerado"
 
-DIFERENCAS = (
+# IRRIG vs NIRRIG por genótipo x dia x banda -- é daqui que sai a prioridade
+# do representante, e não de `diferencas_por_banda_dia.csv`, cujo efeito de
+# condição está marginalizado sobre os genótipos.
+COMPARACAO_ESTRESSE = (
     ROOT.parent / "testeDiferencaSignificativa" / "dataset_gerado"
-    / "diferencas_por_banda_dia.csv"
+    / "comparacao_estresse.csv"
 )
 
 ESTAGIO_PADRAO = "normalizado"
@@ -115,13 +128,17 @@ def agrupar(corr: np.ndarray, w: np.ndarray) -> np.ndarray:
     return grupo
 
 
-def carregar_prioridade(w: np.ndarray) -> pd.Series | None:
-    """Menor q do efeito de condição por banda, vindo do teste por dia."""
-    if not DIFERENCAS.exists():
+def carregar_prioridade(w: np.ndarray, genotipo: str) -> pd.Series | None:
+    """Menor q do efeito de condição por banda, dentro do genótipo."""
+    if not COMPARACAO_ESTRESSE.exists():
         return None
 
-    df = pd.read_csv(DIFERENCAS, sep=";")
-    prioridade = df.groupby("banda_nm")["q_condicao"].min()
+    df = pd.read_csv(COMPARACAO_ESTRESSE, sep=";")
+    df = df[df["genotipo"] == genotipo]
+    if df.empty:
+        return None
+
+    prioridade = df.groupby("banda_nm")["q_fdr"].min()
     return prioridade.reindex(w.astype(int))
 
 
@@ -239,14 +256,15 @@ def colinearidade_residual(corr: np.ndarray, representante: np.ndarray) -> pd.Se
     })
 
 
-def main() -> None:
-    estagio = sys.argv[1] if len(sys.argv) > 1 else ESTAGIO_PADRAO
-
-    SAIDA_DIR.mkdir(parents=True, exist_ok=True)
-
-    print(f"Estágio de pré-processamento: {estagio}")
-    meta, espectro, w = carregar(estagio, turno=TURNO)
-    print(f"{len(meta)} amostras do turno '{TURNO}' x {len(w)} bandas\n")
+def analisar_genotipo(
+    estagio: str,
+    genotipo: str,
+    espectro: np.ndarray,
+    w: np.ndarray,
+) -> pd.DataFrame:
+    """Redução completa para um genótipo. Devolve a linha do resumo."""
+    saida = SAIDA_DIR / genotipo
+    saida.mkdir(parents=True, exist_ok=True)
 
     print("Correlação de Spearman entre todas as bandas...")
     corr = spearman_matriz(espectro)
@@ -257,9 +275,10 @@ def main() -> None:
           f"{len(w)} bandas -> {n_grupos} grupos "
           f"(redução de {1 - n_grupos / len(w):.1%})")
 
-    prioridade = carregar_prioridade(w)
+    prioridade = carregar_prioridade(w, genotipo)
     if prioridade is None:
-        print(f"AVISO: {DIFERENCAS.name} não encontrado -- representante pelo medoide.")
+        print(f"AVISO: {COMPARACAO_ESTRESSE.name} não encontrado ou sem "
+              f"linhas de {genotipo} -- representante pelo medoide.")
     representante, criterio = escolher_representantes(corr, grupo, prioridade)
 
     df_bandas, df_grupos = montar_tabelas(
@@ -272,14 +291,15 @@ def main() -> None:
     print(f"Critério do representante: {criterio}")
 
     residual = colinearidade_residual(corr, representante)
-    print(f"\nColinearidade entre os {n_grupos} representantes: "
+    print(f"Colinearidade entre os {n_grupos} representantes: "
           f"|r| médio {residual['r_abs_medio']:.3f}, "
           f"máximo {residual['r_abs_maximo']:.3f}, "
           f"{int(residual['pares_acima_limiar'])} pares ainda acima de {LIMIAR_R}")
 
     resumo = pd.DataFrame([{
+        "genotipo": genotipo,
         "estagio": estagio,
-        "amostras": len(meta),
+        "amostras": len(espectro),
         "bandas": len(w),
         "grupos": n_grupos,
         "reducao": 1 - n_grupos / len(w),
@@ -292,11 +312,39 @@ def main() -> None:
         **residual.to_dict(),
     }])
 
-    df_bandas.to_csv(SAIDA_DIR / "grupos_colinearidade.csv", sep=";", index=False)
-    df_grupos.to_csv(SAIDA_DIR / "bandas_representativas.csv", sep=";", index=False)
+    df_bandas.to_csv(saida / "grupos_colinearidade.csv", sep=";", index=False)
+    df_grupos.to_csv(saida / "bandas_representativas.csv", sep=";", index=False)
+    resumo.to_csv(saida / "colinearidade_resumo.csv", sep=";", index=False)
+    print(f"Resultados de {genotipo} salvos em {saida}")
+
+    return resumo
+
+
+def main() -> None:
+    estagio = sys.argv[1] if len(sys.argv) > 1 else ESTAGIO_PADRAO
+
+    SAIDA_DIR.mkdir(parents=True, exist_ok=True)
+
+    print(f"Estágio de pré-processamento: {estagio}")
+    # Um único passe: o jump correction linha a linha domina o tempo de
+    # `carregar`, então os genótipos são recortados da matriz já preparada.
+    meta, espectro, w = carregar(estagio, turno=TURNO)
+    print(f"{len(meta)} amostras do turno '{TURNO}' x {len(w)} bandas")
+
+    genotipos = sorted(meta["genotipo"].dropna().unique())
+    print(f"Genótipos analisados de forma independente: {', '.join(genotipos)}")
+
+    resumos = []
+    for genotipo in genotipos:
+        mask = (meta["genotipo"] == genotipo).to_numpy()
+        print(f"\n=== {genotipo} -- {int(mask.sum())} amostras ===")
+        resumos.append(analisar_genotipo(estagio, genotipo, espectro[mask], w))
+
+    resumo = pd.concat(resumos, ignore_index=True)
     resumo.to_csv(SAIDA_DIR / "colinearidade_resumo.csv", sep=";", index=False)
 
-    print(f"\nResultados salvos em {SAIDA_DIR}")
+    print(f"\nResumo dos {len(genotipos)} genótipos em "
+          f"{SAIDA_DIR / 'colinearidade_resumo.csv'}")
 
 
 if __name__ == "__main__":

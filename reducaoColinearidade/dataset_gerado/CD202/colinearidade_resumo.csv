@@ -1,4 +1,2 @@
 genotipo;estagio;amostras;bandas;grupos;reducao;limiar_r;janela_nm;criterio_representante;tamanho_mediano_grupo;tamanho_maximo_grupo;grupos_isolados;pares;r_abs_medio;r_abs_maximo;pares_acima_limiar
-BR16;normalizado;448;2051;206;0.8995611896635788;0.8;10.0;menor_q_condicao;10.0;10;0;21115.0;0.7667086528257189;0.9998922982146325;12158.0
 CD202;normalizado;452;2051;206;0.8995611896635788;0.8;10.0;menor_q_condicao;10.0;10;0;21115.0;0.7870817981120742;0.9998166440189763;13632.0
-EMB48;normalizado;448;2051;206;0.8995611896635788;0.8;10.0;menor_q_condicao;10.0;10;0;21115.0;0.7553967879587901;0.999942879350511;12203.0
