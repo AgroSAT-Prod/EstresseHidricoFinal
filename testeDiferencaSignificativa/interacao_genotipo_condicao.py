@@ -231,31 +231,19 @@ def mannwhitney_por_banda(
     return U, p
 
 
-def efeito_simples(
-    Y: np.ndarray,
-    genotipo: np.ndarray,
-    condicao: np.ndarray,
-    par: tuple[str, str],
-    nivel_condicao: str,
-) -> pd.DataFrame | None:
-    """Os dois genotipos do par diferem DENTRO de uma condicao?
+def contraste_celulas(
+    Y_sub: np.ndarray,
+    idx_a: np.ndarray,
+    idx_b: np.ndarray,
+) -> pd.DataFrame:
+    """Contraste de duas amostras banda a banda, ja recortado nas duas celulas.
 
-    Kruskal-Wallis de duas amostras com os postos recalculados dentro do
-    recorte: o contraste e entre os dois materiais naquela condicao, e incluir
-    a outra condicao na ordenacao contaminaria o teste e o delta de Cliff.
+    `Y_sub` precisa conter so as amostras das duas celulas comparadas: os
+    postos e o delta de Cliff so valem se a ordenacao nao incluir nenhuma
+    amostra de fora do contraste. Kruskal-Wallis e Mann-Whitney exato saem os
+    dois, com as bandas como familia de FDR; `TESTE_EFEITO_SIMPLES` decide qual
+    deles move `p_valor`, `q_fdr` e as colunas de significancia.
     """
-    a, b = par
-    mask = (condicao == nivel_condicao) & np.isin(genotipo, par)
-    if mask.sum() < 4:
-        return None
-
-    Y_sub = Y[mask]
-    gen_sub = genotipo[mask]
-    idx_a = (gen_sub == a).nonzero()[0]
-    idx_b = (gen_sub == b).nonzero()[0]
-    if len(idx_a) < 2 or len(idx_b) < 2:
-        return None
-
     postos = rankdata(Y_sub, axis=0)
     empates = correcao_empates(Y_sub)
 
@@ -282,12 +270,39 @@ def efeito_simples(
         "p_valor": p_ativo,
         "q_fdr": q_ativo,
         "epsilon2": epsilon_quadrado(H, len(Y_sub), 2),
-        # Positivo: o genotipo `a` do par com valores acima de `b`.
+        # Positivo: a celula `a` com valores acima da celula `b`.
         "delta_cliff": cliff_delta(postos, idx_a, idx_b),
     })
     for alpha in ALPHAS:
         df[coluna_sig("efeito", alpha)] = q_ativo < alpha
     return df
+
+
+def efeito_simples(
+    Y: np.ndarray,
+    genotipo: np.ndarray,
+    condicao: np.ndarray,
+    par: tuple[str, str],
+    nivel_condicao: str,
+) -> pd.DataFrame | None:
+    """Os dois genotipos do par diferem DENTRO de uma condicao?
+
+    Kruskal-Wallis de duas amostras com os postos recalculados dentro do
+    recorte: o contraste e entre os dois materiais naquela condicao, e incluir
+    a outra condicao na ordenacao contaminaria o teste e o delta de Cliff.
+    """
+    a, b = par
+    mask = (condicao == nivel_condicao) & np.isin(genotipo, par)
+    if mask.sum() < 4:
+        return None
+
+    gen_sub = genotipo[mask]
+    idx_a = (gen_sub == a).nonzero()[0]
+    idx_b = (gen_sub == b).nonzero()[0]
+    if len(idx_a) < 2 or len(idx_b) < 2:
+        return None
+
+    return contraste_celulas(Y[mask], idx_a, idx_b)
 
 
 SIGLA_VEREDITO = {

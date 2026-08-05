@@ -20,7 +20,12 @@ posicao** das faixas sombreadas: elas dizem em que parte do espectro os
 genotipos se separam, e o quanto essa separacao encolhe conforme o limiar
 aperta.
 
-O maximo de -log10(q) no conjunto e 9.8, entao a escala 0-10 nao corta nada.
+A curva satura no topo: o maximo de -log10(q) no conjunto e 16.5, e o eixo vai
+a 10. Nao ha perda de leitura -- acima de 10 a diferenca entre um q e outro nao
+muda nenhuma decisao, e as faixas sombreadas ja marcam onde ela esta.
+
+Uma grade estendida, com os contrastes em que genotipo e condicao mudam ao
+mesmo tempo, esta em `plot_grade_celulas_cruzadas.py`.
 
 Uso:
     python plot_grade_efeitos_simples.py
