@@ -21,8 +21,15 @@ Dentro de cada grupo os p-valores das bandas recebem correção FDR
 (Benjamini-Hochberg), reaproveitando `fdr_bh` de `selecao_estatistica`.
 Rejeitar H0 (p/q < ALPHA) significa que a banda NÃO é normal naquele grupo.
 
+O nível `bloco` responde à objeção de pseudorreplicação: cada célula
+genótipo x condição x dia são 4 blocos x 8 varreduras da mesma parcela, e
+Shapiro-Wilk pressupõe observações independentes. Agregando as 8 leituras na
+média do bloco, cada valor testado passa a ser uma unidade experimental de
+fato, e o que sobra de não-normalidade não pode ser atribuído à correlação
+entre varreduras do mesmo alvo.
+
 Uso:
-    python shapiro_normalidade.py [recortado|suavizado|normalizado]
+    python shapiro_normalidade.py [recortado|suavizado|normalizado] [leitura|bloco]
 """
 
 from __future__ import annotations
@@ -65,6 +72,23 @@ AGRUPAMENTOS: dict[str, list[str]] = {
     "condicao": ["condicao"],
     "dia": ["dia"],
     "genotipo_condicao_dia": ["genotipo", "condicao", "dia"],
+}
+
+NIVEIS = ("leitura", "bloco")
+NIVEL_PADRAO = "leitura"
+
+# Chaves da unidade experimental: as 8 varreduras dentro delas viram uma média.
+CHAVES_BLOCO = ["genotipo", "condicao", "dia", "bloco"]
+
+# No nível bloco cada dia contribui com 4 médias, então o estrato completo
+# genotipo x condicao x dia cairia para n=4 -- abaixo de qualquer potência
+# útil. O agrupamento mais fino que ainda se sustenta é genotipo x condicao,
+# com os 7 dias juntos (n=28).
+AGRUPAMENTOS_BLOCO: dict[str, list[str]] = {
+    "global": [],
+    "genotipo": ["genotipo"],
+    "condicao": ["condicao"],
+    "genotipo_condicao": ["genotipo", "condicao"],
 }
 
 
@@ -143,6 +167,28 @@ def carregar_estagios(
         "normalizado": normalizado[mask],
     }
     return meta, estagios, w
+
+
+def agregar_por_bloco(
+    meta: pd.DataFrame,
+    espectro: np.ndarray,
+) -> tuple[pd.DataFrame, np.ndarray]:
+    """Colapsa as varreduras de cada parcela na média do bloco.
+
+    Uma linha por (genotipo, condicao, dia, bloco) -- a unidade experimental do
+    delineamento. Elimina a correlação entre as 8 varreduras consecutivas do
+    mesmo alvo, que é o que invalidaria o Shapiro-Wilk no nível leitura.
+    """
+    chaves = meta[CHAVES_BLOCO].copy()
+    grupos = chaves.groupby(CHAVES_BLOCO, sort=True).indices
+
+    linhas = []
+    medias = np.empty((len(grupos), espectro.shape[1]))
+    for i, (valores, idx) in enumerate(sorted(grupos.items())):
+        linhas.append(dict(zip(CHAVES_BLOCO, valores)))
+        medias[i] = espectro[idx].mean(axis=0)
+
+    return pd.DataFrame(linhas), medias
 
 
 def shapiro_por_banda(espectro: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -241,28 +287,35 @@ def resumir(df: pd.DataFrame, agrupamento: str, chaves: list[str]) -> pd.DataFra
 
 def main() -> None:
     estagio = sys.argv[1] if len(sys.argv) > 1 else ESTAGIO_PADRAO
+    nivel = sys.argv[2] if len(sys.argv) > 2 else NIVEL_PADRAO
+    if nivel not in NIVEIS:
+        raise SystemExit(f"Nível inválido: {nivel!r}. Use um de {NIVEIS}.")
 
     SAIDA_DIR.mkdir(parents=True, exist_ok=True)
 
     print(f"Estágio de pré-processamento: {estagio}")
     meta, espectro, w = carregar(estagio, turno=TURNO)
-
-    # Savitzky-Golay e SNV agem linha a linha, então filtrar depois do
-    # pré-processamento não altera os valores das amostras mantidas.
-    mask = (meta["turno"] == TURNO).to_numpy()
-    meta = meta[mask].reset_index(drop=True)
-    espectro = espectro[mask]
     print(f"{len(meta)} amostras do turno '{TURNO}' x {len(w)} bandas "
-          f"({LIMITE_INF}-{LIMITE_SUP} nm)\n")
+          f"({LIMITE_INF}-{LIMITE_SUP} nm)")
+
+    if nivel == "bloco":
+        meta, espectro = agregar_por_bloco(meta, espectro)
+        print(f"Nível bloco: {len(meta)} médias de parcela "
+              f"({' x '.join(CHAVES_BLOCO)})")
+    agrupamentos = AGRUPAMENTOS if nivel == "leitura" else AGRUPAMENTOS_BLOCO
+    # O nível leitura mantém os nomes já referenciados pelos scripts de figura.
+    base = "normalidade" if nivel == "leitura" else "normalidade_bloco"
+    prefixo = f"{base}_shapiro"
+    print()
 
     resumos = []
     df_estrato = pd.DataFrame()
 
-    for agrupamento, chaves in AGRUPAMENTOS.items():
+    for agrupamento, chaves in agrupamentos.items():
         print(f"Shapiro-Wilk por banda - agrupamento: {agrupamento}")
         df = avaliar_agrupamento(meta, espectro, w, chaves)
 
-        saida = SAIDA_DIR / f"normalidade_shapiro_{agrupamento}.csv"
+        saida = SAIDA_DIR / f"{prefixo}_{agrupamento}.csv"
         df.to_csv(saida, sep=";", index=False)
 
         resumo = resumir(df, agrupamento, chaves)
@@ -274,14 +327,16 @@ def main() -> None:
                   f"normais(q FDR): {row['prop_normais_q']:6.1%}  "
                   f"W mediano: {row['W_mediano']:.3f}")
 
-        if agrupamento == "genotipo_condicao_dia":
+        # Estrato mais fino do nível: é sobre ele que se conta em quantos
+        # grupos cada banda sobrevive.
+        if agrupamento == list(agrupamentos)[-1]:
             df_estrato = df
         print()
 
     df_resumo = pd.concat(resumos, ignore_index=True)
-    df_resumo.to_csv(SAIDA_DIR / "normalidade_resumo.csv", sep=";", index=False)
+    df_resumo.to_csv(SAIDA_DIR / f"{base}_resumo.csv", sep=";", index=False)
 
-    # Quantos dos estratos genotipo x condicao x dia cada banda passou.
+    # Quantos dos estratos mais finos cada banda passou.
     testadas = df_estrato[df_estrato["p_valor"].notna()]
     por_banda = (
         testadas.groupby("banda_nm", sort=True)
@@ -300,7 +355,7 @@ def main() -> None:
     por_banda["prop_estratos_normais_q"] = (
         por_banda["estratos_normais_q"] / por_banda["estratos"]
     )
-    por_banda.to_csv(SAIDA_DIR / "normalidade_por_banda.csv", sep=";", index=False)
+    por_banda.to_csv(SAIDA_DIR / f"{base}_por_banda.csv", sep=";", index=False)
 
     n_todas = int((por_banda["prop_estratos_normais_q"] == 1).sum())
     print(f"Bandas normais (q FDR) em todos os {int(por_banda['estratos'].max())} "
