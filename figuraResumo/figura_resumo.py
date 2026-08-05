@@ -66,6 +66,11 @@ TURNO = "manha"
 GENOTIPOS = ["BR16", "CD202", "EMB48"]
 CONDICOES = ["IRRIG", "NIRRIG"]
 
+# A reducao de colinearidade e a selecao de variaveis rodam por genotipo. Os
+# paineis que dependem delas mostram o resultado de um genotipo; CD202 e o de
+# resposta mais forte ao estresse.
+GENOTIPO_SELECAO = "CD202"
+
 # Paleta categorica validada em OKLab sob visao normal e as tres dicromacias.
 # Os 10 pares passam: pior dE em visao normal 21.6 (piso 15), pior dE sob CVD
 # 10.0 em protanopia, no par NIRRIG x BR16 (piso 8). Substitui o par
@@ -340,8 +345,8 @@ def painel_f(ax: plt.Axes, grupos: pd.DataFrame, n_bandas: int) -> None:
     ax.set_xlabel("Comprimento de onda (nm)", fontsize=9)
     ax.set_ylabel("|Spearman| dentro do grupo", fontsize=9)
     ax.set_title(
-        f"F) Reducao de colinearidade: {n_bandas} bandas -> {len(grupos)} "
-        f"grupos de ate 10 nm ({reducao:.0%})",
+        f"F) Reducao de colinearidade em {GENOTIPO_SELECAO}: {n_bandas} "
+        f"bandas -> {len(grupos)} grupos de ate 10 nm ({reducao:.0%})",
         fontsize=10, fontweight="bold", loc="left",
     )
     ax.legend(fontsize=7.5, loc="lower left", ncol=3)
@@ -375,8 +380,8 @@ def painel_g(ax: plt.Axes, selecao: pd.DataFrame, top5: list[int]) -> None:
     anotar_regioes(ax, com_rotulo=False)
     ax.set_xlabel("Comprimento de onda (nm)", fontsize=9)
     ax.set_ylabel("VIP (PLS-DA)", fontsize=9)
-    ax.set_title("G) Selecao de variaveis: VIP do PLS-DA e decisao do Boruta "
-                 "nas bandas representativas",
+    ax.set_title(f"G) Selecao de variaveis em {GENOTIPO_SELECAO}: VIP do "
+                 "PLS-DA e decisao do Boruta nas bandas representativas",
                  fontsize=10, fontweight="bold", loc="left")
     ax.legend(fontsize=8, loc="upper left", ncol=2)
     ax.grid(True, alpha=0.3)
@@ -450,7 +455,8 @@ def painel_i(ax: plt.Axes, etapas: list[tuple[str, int]]) -> None:
     ax.set_xscale("log")
     ax.set_xlim(1, valores[0] * 2.2)
     ax.set_xlabel("Bandas (escala log)", fontsize=9)
-    ax.set_title("I) Funil da selecao", fontsize=10, fontweight="bold", loc="left")
+    ax.set_title(f"I) Funil da selecao em {GENOTIPO_SELECAO}", fontsize=10,
+                 fontweight="bold", loc="left")
     ax.grid(True, alpha=0.3, axis="x")
 
 
@@ -547,9 +553,13 @@ def main() -> None:
 
     estresse = pd.read_csv(COMPARACAO / "comparacao_estresse.csv", sep=";")
     resumo = pd.read_csv(COMPARACAO / "comparacao_resumo.csv", sep=";")
-    grupos = pd.read_csv(COLINEARIDADE / "bandas_representativas.csv", sep=";")
-    selecao = pd.read_csv(SELECAO / "selecao_variaveis.csv", sep=";")
-    top5 = pd.read_csv(SELECAO / "top5_bandas.csv", sep=";")
+    grupos = pd.read_csv(
+        COLINEARIDADE / GENOTIPO_SELECAO / "bandas_representativas.csv", sep=";"
+    )
+    selecao = pd.read_csv(
+        SELECAO / GENOTIPO_SELECAO / "selecao_variaveis.csv", sep=";"
+    )
+    top5 = pd.read_csv(SELECAO / GENOTIPO_SELECAO / "top5_bandas.csv", sep=";")
 
     bandas_top5 = [int(b) for b in top5.sort_values("posicao")["banda_nm"]]
     dia = dia_de_pico(resumo)
