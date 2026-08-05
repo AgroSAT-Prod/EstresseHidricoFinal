@@ -1,0 +1,6 @@
+modelo;modo;genotipo;fold;iteracoes_usadas;iteracoes_maximas;classe_positiva
+gradient_boosting;por_genotipo;EMB48;1;409;500;NIRRIG
+gradient_boosting;por_genotipo;EMB48;2;284;500;NIRRIG
+gradient_boosting;por_genotipo;EMB48;3;163;500;NIRRIG
+gradient_boosting;por_genotipo;EMB48;4;270;500;NIRRIG
+gradient_boosting;por_genotipo;EMB48;5;459;500;NIRRIG

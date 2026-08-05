@@ -1,0 +1,2 @@
+estagio_preprocessamento;turno;alvo;classe_positiva;estrategia_validacao;grupo_validacao;modelos;bandas_por_genotipo
+normalizado;manha;condicao;NIRRIG;GroupKFold (leave-one-block-out);bloco;random_forest, gradient_boosting;BR16: 1942, 1360, 1387, 1844, 425 | CD202: 1968, 1347, 1531, 1367, 1842 | EMB48: 713, 1933, 404, 1369, 1381

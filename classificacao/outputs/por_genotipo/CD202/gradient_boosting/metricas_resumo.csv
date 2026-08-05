@@ -1,0 +1,2 @@
+modelo;modo;genotipo;accuracy_media;accuracy_desvio;precision_media;precision_desvio;recall_media;recall_desvio;f1_score_media;f1_score_desvio;kappa_media;kappa_desvio;auc_roc_media;auc_roc_desvio
+gradient_boosting;por_genotipo;CD202;0.9425611210494932;0.01862432570123421;0.9305440110826939;0.02358632228276113;0.95625;0.02795084971874738;0.9429546878560036;0.018572336127884854;0.885151336976668;0.03722981430492581;0.9894547412223194;0.0061925109540126025

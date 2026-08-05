@@ -25,7 +25,10 @@ O estágio padrão é `normalizado`. Portanto, por padrão, os modelos usam `dat
 
 A flag `--modo` define quais bandas entram no experimento:
 
-- `agrupado`: usa as Top 5 bandas gerais de `selecaoVariaveis/dataset_gerado/top5_bandas.csv`.
+- `agrupado`: treina sobre todas as amostras com as Top 5 bandas de um genótipo de referência
+  (`CD202`), lidas de `selecaoVariaveis/dataset_gerado/CD202/top5_bandas.csv`. A seleção de
+  variáveis roda por genótipo, então não existe mais um Top 5 do pool inteiro; o genótipo de
+  referência é a constante `GENOTIPO_REFERENCIA` em `scripts/classificacao_utils.py`.
 - `por_genotipo`: executa um cenário separado para cada genótipo (`BR16`, `CD202`, `EMB48`) usando `dataset/dataset_gerado/bandas_<genotipo>.csv`.
 - `ambos`: executa os modos `agrupado` e `por_genotipo`.
 

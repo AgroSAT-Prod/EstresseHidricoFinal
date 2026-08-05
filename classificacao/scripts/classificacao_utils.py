@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from collections.abc import Callable
 from pathlib import Path
 
@@ -30,14 +31,25 @@ SCRIPTS_DIR = Path(__file__).resolve().parent
 CLASSIFICACAO_DIR = SCRIPTS_DIR.parent
 PROJECT_ROOT = CLASSIFICACAO_DIR.parent
 
+sys.path.insert(0, str(PROJECT_ROOT / "testeDeNormalidade"))
+
+from shapiro_normalidade import carregar  # noqa: E402
+
 SAIDA_DIR = CLASSIFICACAO_DIR / "outputs"
-DATASET_DIR = PROJECT_ROOT / "dataset"
-DATASETS_PREPROCESSADOS = {
-    "recortado": DATASET_DIR / "Unificada13052026_400_2450.csv",
-    "suavizado": DATASET_DIR / "Unificada13052026_suavizado.csv",
-    "normalizado": DATASET_DIR / "Unificada13052026_normalizado.csv",
-}
-TOP5_GERAL_PATH = PROJECT_ROOT / "selecaoVariaveis" / "dataset_gerado" / "top5_bandas.csv"
+# A selecao de variaveis passou a rodar por genotipo, entao nao existe mais um
+# Top 5 do pool inteiro. O modo `agrupado` usa o Top 5 de um genotipo de
+# referencia -- CD202, o de resposta mais forte ao estresse -- treinando sobre
+# todas as amostras.
+GENOTIPO_REFERENCIA = "CD202"
+TOP5_GERAL_PATH = (
+    PROJECT_ROOT / "selecaoVariaveis" / "dataset_gerado" / GENOTIPO_REFERENCIA
+    / "top5_bandas.csv"
+)
+SELECAO_DIR = PROJECT_ROOT / "selecaoVariaveis" / "dataset_gerado"
+# Fonte antiga das bandas por genotipo: o ranking so por q_fdr de
+# `testeDiferencaSignificativa/testar_bandas_por_genotipo.py`. Fica como
+# fallback -- a fonte corrente e a Top 5 de `selecaoVariaveis`, que aplica os
+# quatro criterios (significancia, colinearidade, VIP e Boruta).
 BANDAS_GENOTIPO_DIR = PROJECT_ROOT / "dataset" / "dataset_gerado"
 
 ESTAGIO_PADRAO = "normalizado"
@@ -125,37 +137,22 @@ def carregar_bandas_gerais() -> list[int]:
 
 
 def carregar_bandas_por_genotipo(genotipo: str) -> list[int]:
-    caminho = BANDAS_GENOTIPO_DIR / f"bandas_{genotipo}.csv"
-    if not caminho.exists():
-        raise FileNotFoundError(f"Arquivo de bandas por genotipo nao encontrado: {caminho}")
+    """Top 5 do genotipo, pelos quatro criterios da selecao de variaveis."""
+    caminho = SELECAO_DIR / genotipo / "top5_bandas.csv"
+    if caminho.exists():
+        df = pd.read_csv(caminho, sep=";")
+        return df.sort_values("posicao")["banda_nm"].astype(int).head(TOP_K).tolist()
 
-    df = pd.read_csv(caminho, sep=";")
-    return df.sort_values("rank")["banda_nm"].astype(int).head(TOP_K).tolist()
-
-
-def carregar_dataset_preprocessado(estagio: str) -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:
-    caminho = DATASETS_PREPROCESSADOS.get(estagio)
-    if caminho is None:
-        raise ValueError(f"Estagio invalido: {estagio!r}. Use um de {tuple(DATASETS_PREPROCESSADOS)}.")
-    if not caminho.exists():
+    antigo = BANDAS_GENOTIPO_DIR / f"bandas_{genotipo}.csv"
+    if not antigo.exists():
         raise FileNotFoundError(
-            f"Dataset preprocessado nao encontrado: {caminho}. "
-            "Execute os scripts em preprocessamento_espectral antes da classificacao."
+            f"Bandas de {genotipo} nao encontradas em {caminho} nem em {antigo}."
         )
 
-    df = pd.read_csv(caminho, sep=";")
-    df.columns = [c.strip() for c in df.columns]
-
-    bandas = sorted(int(c) for c in df.columns if c.isdigit())
-    bandas_str = [str(banda) for banda in bandas]
-    meta = df[[c for c in df.columns if not c.isdigit()]].copy()
-    if "dia" not in meta.columns and "data_coleta" in meta.columns:
-        meta["dia"] = meta["data_coleta"].astype(str).str.extract(r"^(D\d+)")
-
-    espectro = df[bandas_str].apply(pd.to_numeric, errors="raise").to_numpy(dtype=float)
-    w = np.array(bandas, dtype=float)
-
-    return meta, espectro, w
+    print(f"AVISO: {caminho} nao encontrado -- usando o ranking so por q_fdr "
+          f"de {antigo.name}.")
+    df = pd.read_csv(antigo, sep=";")
+    return df.sort_values("rank")["banda_nm"].astype(int).head(TOP_K).tolist()
 
 
 def selecionar_colunas(espectro: np.ndarray, w: np.ndarray, bandas: list[int]) -> np.ndarray:
@@ -169,7 +166,7 @@ def selecionar_colunas(espectro: np.ndarray, w: np.ndarray, bandas: list[int]) -
 
 
 def montar_cenarios(modo: str, estagio: str) -> list[dict[str, object]]:
-    meta, espectro, w = carregar_dataset_preprocessado(estagio)
+    meta, espectro, w = carregar(estagio)
     cenarios: list[dict[str, object]] = []
 
     if modo in ("agrupado", "ambos"):
@@ -416,7 +413,6 @@ def avaliar_cenario(
             "modo": modo,
             "genotipo": genotipo,
             "estagio_preprocessamento": estagio,
-            "dataset_entrada": str(DATASETS_PREPROCESSADOS[estagio].relative_to(PROJECT_ROOT)),
             "alvo": ALVO,
             "classe_positiva": CLASSE_POSITIVA,
             "bandas_nm": ", ".join(str(b) for b in bandas),
