@@ -1,0 +1,2 @@
+genotipo;dia;turno;amostras;bandas_originais;representantes_spearman;limiar_spearman_abs_rho;n_arvores;validacao;classe_positiva
+EMB48;D05;manha;64;2051;207;0.8;100;GroupKFold leave-one-block-out;NIRRIG

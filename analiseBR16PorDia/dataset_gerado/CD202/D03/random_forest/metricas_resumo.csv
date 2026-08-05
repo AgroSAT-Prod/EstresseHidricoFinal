@@ -1,0 +1,7 @@
+metrica;media;desvio
+accuracy;0.9375;0.125
+balanced_accuracy;0.9375;0.125
+precision;1.0;0.0
+recall;0.875;0.25
+f1;0.9166666666666666;0.16666666666666669
+auc_roc;0.875;0.25
