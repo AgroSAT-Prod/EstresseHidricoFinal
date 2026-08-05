@@ -29,7 +29,7 @@ fato, e o que sobra de não-normalidade não pode ser atribuído à correlação
 entre varreduras do mesmo alvo.
 
 Uso:
-    python shapiro_normalidade.py [recortado|suavizado|normalizado] [leitura|bloco]
+    python shapiro_normalidade.py [recortado|suavizado|normalizado] [leitura|bloco|bloco_diario]
 """
 
 from __future__ import annotations
@@ -74,7 +74,7 @@ AGRUPAMENTOS: dict[str, list[str]] = {
     "genotipo_condicao_dia": ["genotipo", "condicao", "dia"],
 }
 
-NIVEIS = ("leitura", "bloco")
+NIVEIS = ("leitura", "bloco", "bloco_diario")
 NIVEL_PADRAO = "leitura"
 
 # Chaves da unidade experimental: as 8 varreduras dentro delas viram uma média.
@@ -89,6 +89,16 @@ AGRUPAMENTOS_BLOCO: dict[str, list[str]] = {
     "genotipo": ["genotipo"],
     "condicao": ["condicao"],
     "genotipo_condicao": ["genotipo", "condicao"],
+}
+
+# Avaliação temporal sobre as médias de bloco. Inclui o estrato completo do
+# delineamento em cada dia (n=4), conforme solicitado; os arquivos de saída
+# são separados da análise bloco com os sete dias reunidos.
+AGRUPAMENTOS_BLOCO_DIARIO: dict[str, list[str]] = {
+    "dia": ["dia"],
+    "dia_genotipo": ["dia", "genotipo"],
+    "dia_condicao": ["dia", "condicao"],
+    "dia_genotipo_condicao": ["dia", "genotipo", "condicao"],
 }
 
 
@@ -298,13 +308,20 @@ def main() -> None:
     print(f"{len(meta)} amostras do turno '{TURNO}' x {len(w)} bandas "
           f"({LIMITE_INF}-{LIMITE_SUP} nm)")
 
-    if nivel == "bloco":
+    if nivel in ("bloco", "bloco_diario"):
         meta, espectro = agregar_por_bloco(meta, espectro)
         print(f"Nível bloco: {len(meta)} médias de parcela "
               f"({' x '.join(CHAVES_BLOCO)})")
-    agrupamentos = AGRUPAMENTOS if nivel == "leitura" else AGRUPAMENTOS_BLOCO
+    if nivel == "leitura":
+        agrupamentos = AGRUPAMENTOS
+        base = "normalidade"
+    elif nivel == "bloco":
+        agrupamentos = AGRUPAMENTOS_BLOCO
+        base = "normalidade_bloco"
+    else:
+        agrupamentos = AGRUPAMENTOS_BLOCO_DIARIO
+        base = "normalidade_bloco_diario"
     # O nível leitura mantém os nomes já referenciados pelos scripts de figura.
-    base = "normalidade" if nivel == "leitura" else "normalidade_bloco"
     prefixo = f"{base}_shapiro"
     print()
 
