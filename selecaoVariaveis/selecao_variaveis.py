@@ -8,6 +8,18 @@ sobreviveria à correção de múltiplos testes do Boruta.
 
 Alvo: `condicao` (IRRIG vs NIRRIG), a discriminação de estresse hídrico.
 
+Um genótipo, uma análise
+------------------------
+Cada genótipo é analisado de forma independente, sobre suas próprias amostras
+e sobre os representantes que `reducaoColinearidade` produziu para ele. O
+resultado é um Top 5 por genótipo: as regiões que respondem ao estresse não
+são as mesmas nos três materiais, e um Top 5 único esconderia isso.
+
+Ressalva: dos dois critérios de significância, só `q_condicao` é por genótipo
+(vem de `comparacao_estresse.csv`). O `q_tempo` continua vindo de
+`analiseTemporalBandas`, que agrupa por condição (`todas`/IRRIG/NIRRIG) e não
+por genótipo -- esse critério é, portanto, compartilhado pelos três.
+
 VIP (PLS-DA)
 ------------
 PLS-DA com a condição codificada em -1/+1. O número de componentes é escolhido
@@ -46,6 +58,15 @@ Interseção dos quatro critérios da metodologia, aplicados nesta ordem:
 O desempate entre as candidatas é a média das posições em VIP e na importância
 do Boruta, o que evita que uma escala domine a outra.
 
+Saídas (uma pasta por genótipo)
+-------------------------------
+- `<GENOTIPO>/pls_da_validacao.csv`   acurácia por número de componentes
+- `<GENOTIPO>/vip_pls_da.csv`         VIP de cada banda representativa
+- `<GENOTIPO>/boruta_resultado.csv`   acertos e decisão do Boruta
+- `<GENOTIPO>/selecao_variaveis.csv`  os quatro critérios lado a lado
+- `<GENOTIPO>/top5_bandas.csv`        as Top 5 do genótipo
+- `top5_bandas_por_genotipo.csv`      as Top 5 dos três, empilhadas
+
 Uso:
     python selecao_variaveis.py [recortado|suavizado|normalizado]
 """
@@ -70,13 +91,10 @@ from shapiro_normalidade import carregar  # noqa: E402
 
 SAIDA_DIR = ROOT / "dataset_gerado"
 
-REPRESENTANTES = (
-    ROOT.parent / "reducaoColinearidade" / "dataset_gerado"
-    / "bandas_representativas.csv"
-)
-DIFERENCAS = (
+COLINEARIDADE = ROOT.parent / "reducaoColinearidade" / "dataset_gerado"
+COMPARACAO_ESTRESSE = (
     ROOT.parent / "testeDiferencaSignificativa" / "dataset_gerado"
-    / "diferencas_por_banda_dia.csv"
+    / "comparacao_estresse.csv"
 )
 TEMPORAL = (
     ROOT.parent / "analiseTemporalBandas" / "dataset_gerado"
@@ -106,24 +124,33 @@ CORR_MAX = 0.80
 SEMENTE = 42
 
 
-def carregar_bandas_representativas(w: np.ndarray) -> tuple[np.ndarray, bool]:
-    """Máscara das bandas representativas vindas da redução de colinearidade."""
-    if not REPRESENTANTES.exists():
+def carregar_bandas_representativas(
+    w: np.ndarray,
+    genotipo: str,
+) -> tuple[np.ndarray, bool]:
+    """Máscara das bandas representativas do genótipo na redução."""
+    caminho = COLINEARIDADE / genotipo / "bandas_representativas.csv"
+    if not caminho.exists():
         return np.ones(len(w), dtype=bool), False
 
-    df = pd.read_csv(REPRESENTANTES, sep=";")
+    df = pd.read_csv(caminho, sep=";")
     bandas = set(df["banda_representante_nm"].astype(int))
     return np.array([int(b) in bandas for b in w]), True
 
 
-def carregar_significancia(bandas: np.ndarray) -> pd.DataFrame:
-    """Menor q por banda no teste por dia e na análise temporal."""
+def carregar_significancia(bandas: np.ndarray, genotipo: str) -> pd.DataFrame:
+    """Menor q por banda: condição dentro do genótipo e evolução temporal."""
     df = pd.DataFrame({"banda_nm": bandas})
 
-    if DIFERENCAS.exists():
-        dia = pd.read_csv(DIFERENCAS, sep=";")
+    estresse = (
+        pd.read_csv(COMPARACAO_ESTRESSE, sep=";")
+        if COMPARACAO_ESTRESSE.exists() else pd.DataFrame()
+    )
+    if not estresse.empty:
+        estresse = estresse[estresse["genotipo"] == genotipo]
+    if not estresse.empty:
         df["q_condicao"] = (
-            dia.groupby("banda_nm")["q_condicao"].min()
+            estresse.groupby("banda_nm")["q_fdr"].min()
             .reindex(bandas).to_numpy()
         )
     else:
@@ -301,20 +328,25 @@ def selecionar_top(
     return top
 
 
-def main() -> None:
-    estagio = sys.argv[1] if len(sys.argv) > 1 else ESTAGIO_PADRAO
+def analisar_genotipo(
+    genotipo: str,
+    meta: pd.DataFrame,
+    espectro: np.ndarray,
+    w: np.ndarray,
+) -> pd.DataFrame:
+    """Seleção completa para um genótipo. Devolve o Top 5 do genótipo."""
+    saida = SAIDA_DIR / genotipo
+    saida.mkdir(parents=True, exist_ok=True)
+
+    # Reinicia o gerador por genótipo: senão o Boruta de cada um dependeria da
+    # ordem em que os genótipos foram processados.
     rng = np.random.default_rng(SEMENTE)
 
-    SAIDA_DIR.mkdir(parents=True, exist_ok=True)
-
-    print(f"Estágio de pré-processamento: {estagio}")
-    meta, espectro, w = carregar(estagio, turno=TURNO)
-    print(f"{len(meta)} amostras do turno '{TURNO}' x {len(w)} bandas")
-
-    mask, tem_reducao = carregar_bandas_representativas(w)
+    mask, tem_reducao = carregar_bandas_representativas(w, genotipo)
     if not tem_reducao:
-        print(f"AVISO: {REPRESENTANTES.name} não encontrado -- "
-              "usando todas as bandas (colinearidade não reduzida).")
+        print(f"AVISO: bandas_representativas.csv de {genotipo} não "
+              "encontrado -- usando todas as bandas (colinearidade não "
+              "reduzida).")
     X = espectro[:, mask]
     bandas = w[mask].astype(int)
     print(f"Entrada da seleção: {X.shape[1]} bandas representativas\n")
@@ -338,7 +370,7 @@ def main() -> None:
     print("\nBoruta -- Random Forest contra variáveis-sombra:")
     df_boruta = boruta(X, y, rng)
 
-    df_sig = carregar_significancia(bandas)
+    df_sig = carregar_significancia(bandas, genotipo)
 
     df = pd.DataFrame({
         "banda_nm": bandas,
@@ -358,20 +390,20 @@ def main() -> None:
 
     top = selecionar_top(df, X)
 
-    df_cv.to_csv(SAIDA_DIR / "pls_da_validacao.csv", sep=";", index=False)
+    df_cv.to_csv(saida / "pls_da_validacao.csv", sep=";", index=False)
     df[["banda_nm", "vip", "vip_acima_de_1"]].to_csv(
-        SAIDA_DIR / "vip_pls_da.csv", sep=";", index=False
+        saida / "vip_pls_da.csv", sep=";", index=False
     )
     df[[
         "banda_nm", "iteracoes", "acertos", "prop_acertos",
         "importancia_media", "decisao_boruta", "confirmada_boruta",
-    ]].to_csv(SAIDA_DIR / "boruta_resultado.csv", sep=";", index=False)
+    ]].to_csv(saida / "boruta_resultado.csv", sep=";", index=False)
     df.drop(columns="coluna").to_csv(
-        SAIDA_DIR / "selecao_variaveis.csv", sep=";", index=False
+        saida / "selecao_variaveis.csv", sep=";", index=False
     )
     if not top.empty:
         top.drop(columns="coluna").to_csv(
-            SAIDA_DIR / "top5_bandas.csv", sep=";", index=False
+            saida / "top5_bandas.csv", sep=";", index=False
         )
 
     confirmadas = int(df["confirmada_boruta"].sum())
@@ -391,7 +423,48 @@ def main() -> None:
                   f"Boruta {row['prop_acertos']:5.1%} acertos  "
                   f"q_condicao {row['q_condicao']:.2e}")
 
-    print(f"\nResultados salvos em {SAIDA_DIR}")
+    print(f"\nResultados de {genotipo} salvos em {saida}")
+
+    if top.empty:
+        return top
+    top = top.drop(columns="coluna").copy()
+    top.insert(0, "genotipo", genotipo)
+    return top
+
+
+def main() -> None:
+    estagio = sys.argv[1] if len(sys.argv) > 1 else ESTAGIO_PADRAO
+
+    SAIDA_DIR.mkdir(parents=True, exist_ok=True)
+
+    print(f"Estágio de pré-processamento: {estagio}")
+    meta, espectro, w = carregar(estagio, turno=TURNO)
+    print(f"{len(meta)} amostras do turno '{TURNO}' x {len(w)} bandas")
+
+    genotipos = sorted(meta["genotipo"].dropna().unique())
+    print(f"Genótipos analisados de forma independente: {', '.join(genotipos)}")
+
+    tops = []
+    for genotipo in genotipos:
+        mask = (meta["genotipo"] == genotipo).to_numpy()
+        print(f"\n=== {genotipo} -- {int(mask.sum())} amostras ===")
+        top = analisar_genotipo(
+            genotipo,
+            meta[mask].reset_index(drop=True),
+            espectro[mask],
+            w,
+        )
+        if not top.empty:
+            tops.append(top)
+
+    if tops:
+        consolidado = SAIDA_DIR / "top5_bandas_por_genotipo.csv"
+        pd.concat(tops, ignore_index=True).to_csv(
+            consolidado, sep=";", index=False
+        )
+        print(f"\nTop 5 dos {len(tops)} genótipos em {consolidado}")
+    else:
+        print("\nNenhum genótipo produziu bandas nos quatro critérios.")
 
 
 if __name__ == "__main__":
