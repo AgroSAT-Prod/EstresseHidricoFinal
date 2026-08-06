@@ -40,10 +40,10 @@ D02 vs Dn (linha de base contra cada dia seguinte), sinalizado na coluna
 resíduo intra-unidades) na via normal; Nemenyi, o equivalente de posto do
 Tukey, na via de Friedman.
 
-A análise roda três vezes: com todas as unidades, e dentro de cada condição
-(IRRIG, NIRRIG) separadamente -- é a comparação entre esses dois recortes que
-separa a evolução temporal do estresse hídrico da evolução fenológica comum
-aos dois tratamentos.
+A análise roda independentemente em cada combinação de genótipo e condição
+(BR16|IRRIG, BR16|NIRRIG, CD202|IRRIG, CD202|NIRRIG, EMB48|IRRIG e
+EMB48|NIRRIG). Assim, cada comparação de dias usa apenas as quatro unidades
+experimentais do mesmo genótipo sob a mesma condição.
 
 Resultados
 ----------
@@ -52,9 +52,14 @@ Resultados
 - `separacao_temporal.csv`     separação espectral de cada par de dias
 - `bandas_sensiveis.csv`       bandas ordenadas por sensibilidade temporal
 - `temporal_resumo.csv`        uma linha por grupo analisado
+- `top5_bandas_genotipo_condicao_dia.csv` Top 5 por genótipo, condição e
+  par de dias, usando p-valor <= 0,05
 
 Uso:
-    python analise_temporal.py [recortado|suavizado|normalizado]
+    python analise_temporal.py [recortado|suavizado|normalizado] [--top5]
+
+Com `--top5`, calcula somente as cinco bandas mais significativas de cada
+comparação entre dias, sem gerar as tabelas completas do pós-hoc.
 """
 
 from __future__ import annotations
@@ -475,6 +480,117 @@ def bandas_sensiveis(df_banda: pd.DataFrame) -> pd.DataFrame:
     return pd.concat(partes, ignore_index=True) if partes else pd.DataFrame()
 
 
+def top5_por_genotipo_condicao_dia(df_posthoc: pd.DataFrame) -> pd.DataFrame:
+    """Top 5 por genótipo, condição e comparação entre dois dias.
+
+    O grupo tem o formato ``GENOTIPO|CONDICAO``. O p-valor do pós-hoc testa a
+    diferença entre os dois dias dentro dessa mesma combinação; bandas com
+    p-valor maior que 0,05 não entram no ranking.
+    """
+    partes = []
+    for (grupo, dia_a, dia_b), sub in df_posthoc.groupby(
+        ["grupo", "dia_a", "dia_b"], sort=True
+    ):
+        genotipo, condicao = grupo.split("|", maxsplit=1)
+        top = sub[sub["p_valor"] <= ALPHA].sort_values(
+            ["p_valor", "banda_nm"], kind="stable"
+        ).head(5).copy()
+        if top.empty:
+            continue
+        top.insert(0, "posicao", np.arange(1, len(top) + 1))
+        top.insert(0, "condicao", condicao)
+        top.insert(0, "genotipo", genotipo)
+        partes.append(top[[
+            "genotipo", "condicao", "dia_a", "dia_b", "posicao",
+            "banda_nm", "via", "p_valor", "q_fdr", "significativa",
+            "diferenca_media", "diferenca_postos", "estat_q",
+        ]])
+
+    colunas = [
+        "genotipo", "condicao", "dia_a", "dia_b", "posicao",
+        "banda_nm", "via", "p_valor", "q_fdr", "significativa",
+        "diferenca_media", "diferenca_postos", "estat_q",
+    ]
+    return pd.concat(partes, ignore_index=True) if partes else pd.DataFrame(columns=colunas)
+
+
+def top5_direto_por_grupo(
+    Y: np.ndarray,
+    w: np.ndarray,
+    dias: list[str],
+    grupo: str,
+) -> pd.DataFrame:
+    """Calcula só os p-valores necessários para o Top 5 de cada par de dias.
+
+    A ordem do p-valor do Tukey/Nemenyi é a ordem inversa de ``estat_q``. Para
+    não avaliar numericamente a distribuição da amplitude studentizada em
+    todas as 43.071 combinações de um grupo, primeiro aplica-se o valor crítico
+    de p=0,05 e o p-valor exato é calculado somente para as cinco maiores
+    estatísticas de cada comparação. O teste e o limiar são os mesmos da via
+    completa; apenas o cálculo é mais eficiente.
+    """
+    n, k, _ = Y.shape
+    residuos = residuos_aditivos(Y)
+    _, p_shapiro = shapiro_por_banda(residuos)
+    normal = np.isfinite(p_shapiro) & (p_shapiro > ALPHA)
+    rm = anova_medidas_repetidas(Y)
+    fr = friedman(Y)
+
+    erro_tukey = np.sqrt(rm["qm_residuo"] / n)
+    erro_nemenyi = np.sqrt(k * (k + 1) / (6.0 * n))
+    limite_tukey = studentized_range.isf(ALPHA, k, int(rm["gl_residuo"][0]))
+    limite_nemenyi = studentized_range.isf(ALPHA, k, np.inf)
+
+    genotipo, condicao = grupo.split("|", maxsplit=1)
+    linhas = []
+    for i in range(k):
+        for j in range(i + 1, k):
+            diferenca_media = rm["media_dia"][i] - rm["media_dia"][j]
+            diferenca_postos = fr["media_postos"][i] - fr["media_postos"][j]
+            with np.errstate(divide="ignore", invalid="ignore"):
+                q_tukey = np.abs(diferenca_media) / erro_tukey
+            q_nemenyi = np.abs(diferenca_postos) / erro_nemenyi
+            estat_q = np.where(normal, q_tukey, q_nemenyi)
+            limite = np.where(normal, limite_tukey, limite_nemenyi)
+            candidatas = np.flatnonzero(np.isfinite(estat_q) & (estat_q >= limite))
+            if not len(candidatas):
+                continue
+
+            ordem = np.lexsort((w[candidatas], -estat_q[candidatas]))
+            top = candidatas[ordem[:5]]
+            p_valor = np.full(len(top), np.nan)
+            mask_normal = normal[top]
+            if mask_normal.any():
+                p_valor[mask_normal] = studentized_range.sf(
+                    estat_q[top][mask_normal], k, int(rm["gl_residuo"][0])
+                )
+            if (~mask_normal).any():
+                p_valor[~mask_normal] = studentized_range.sf(
+                    estat_q[top][~mask_normal], k, np.inf
+                )
+
+            linhas.append(pd.DataFrame({
+                "genotipo": genotipo,
+                "condicao": condicao,
+                "dia_a": dias[i],
+                "dia_b": dias[j],
+                "posicao": np.arange(1, len(top) + 1),
+                "banda_nm": w[top].astype(int),
+                "via": np.where(mask_normal, "tukey", "nemenyi"),
+                "p_valor": p_valor,
+                "estat_q": estat_q[top],
+                "diferenca_media": diferenca_media[top],
+                "diferenca_postos": diferenca_postos[top],
+            }))
+
+    colunas = [
+        "genotipo", "condicao", "dia_a", "dia_b", "posicao",
+        "banda_nm", "via", "p_valor", "estat_q", "diferenca_media",
+        "diferenca_postos",
+    ]
+    return pd.concat(linhas, ignore_index=True) if linhas else pd.DataFrame(columns=colunas)
+
+
 def resumir(
     df_banda: pd.DataFrame,
     df_posthoc: pd.DataFrame,
@@ -516,6 +632,7 @@ def resumir(
 
 def main() -> None:
     estagio = sys.argv[1] if len(sys.argv) > 1 else ESTAGIO_PADRAO
+    somente_top5 = "--top5" in sys.argv
 
     SAIDA_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -529,10 +646,24 @@ def main() -> None:
     if np.isnan(Y).any():
         raise SystemExit("Painel incompleto: alguma unidade não tem todos os dias.")
 
+    genotipo = np.array([u.split("|")[1] for u in unidades])
     condicao = np.array([u.split("|")[2] for u in unidades])
-    grupos = {"todas": np.ones(len(unidades), dtype=bool)}
-    for nivel in sorted(set(condicao)):
-        grupos[nivel] = condicao == nivel
+    grupos = {
+        f"{g}|{c}": (genotipo == g) & (condicao == c)
+        for g in sorted(set(genotipo))
+        for c in sorted(set(condicao))
+    }
+
+    if somente_top5:
+        top5 = [
+            top5_direto_por_grupo(Y[mask_grupo], w, dias, grupo)
+            for grupo, mask_grupo in grupos.items()
+        ]
+        df_top5 = pd.concat(top5, ignore_index=True)
+        destino = SAIDA_DIR / "top5_bandas_genotipo_condicao_dia.csv"
+        df_top5.to_csv(destino, sep=";", index=False)
+        print(f"\nTop 5 por genótipo, condição e par de dias salvo em {destino}")
+        return
 
     por_banda = []
     posthoc = []
@@ -556,12 +687,17 @@ def main() -> None:
     df_sep = separacao_temporal(df_posthoc)
     df_sensiveis = bandas_sensiveis(df_banda)
     df_resumo = resumir(df_banda, df_posthoc, df_sep)
+    df_top5 = top5_por_genotipo_condicao_dia(df_posthoc)
 
     df_banda.to_csv(SAIDA_DIR / "temporal_por_banda.csv", sep=";", index=False)
     df_posthoc.to_csv(SAIDA_DIR / "tukey_posthoc.csv", sep=";", index=False)
     df_sep.to_csv(SAIDA_DIR / "separacao_temporal.csv", sep=";", index=False)
     df_sensiveis.to_csv(SAIDA_DIR / "bandas_sensiveis.csv", sep=";", index=False)
     df_resumo.to_csv(SAIDA_DIR / "temporal_resumo.csv", sep=";", index=False)
+    df_top5.to_csv(
+        SAIDA_DIR / "top5_bandas_genotipo_condicao_dia.csv",
+        sep=";", index=False,
+    )
 
     print("\nMomento de maior separação espectral (top 3 pares por grupo):")
     for grupo, sub in df_sep.groupby("grupo", sort=True):
@@ -579,6 +715,11 @@ def main() -> None:
             for _, r in sub.head(5).iterrows()
         )
         print(f"  {grupo:<8} {topo}")
+
+    print("\nTop 5 por par de dias (p_valor <= 0,05):")
+    for (genotipo, condicao), sub in df_top5.groupby(["genotipo", "condicao"]):
+        n_pares = sub[["dia_a", "dia_b"]].drop_duplicates().shape[0]
+        print(f"  {genotipo}|{condicao}: {n_pares} comparações com Top 5")
 
     print(f"\nResultados salvos em {SAIDA_DIR}")
 
