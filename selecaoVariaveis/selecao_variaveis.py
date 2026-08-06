@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Seleção de variáveis: VIP (PLS-DA), Boruta e escolha das Top 5 bandas.
+"""Seleção de variáveis e escolha das Top 5 bandas por p-valor.
 
 Parte das bandas representativas de `reducaoColinearidade` -- entrar aqui com
 as 2051 bandas originais faria os dois métodos dividirem a importância de cada
@@ -15,10 +15,10 @@ e sobre os representantes que `reducaoColinearidade` produziu para ele. O
 resultado é um Top 5 por genótipo: as regiões que respondem ao estresse não
 são as mesmas nos três materiais, e um Top 5 único esconderia isso.
 
-Ressalva: dos dois critérios de significância, só `q_condicao` é por genótipo
-(vem de `comparacao_estresse.csv`). O `q_tempo` continua vindo de
-`analiseTemporalBandas`, que agrupa por condição (`todas`/IRRIG/NIRRIG) e não
-por genótipo -- esse critério é, portanto, compartilhado pelos três.
+O teste de condição é feito separadamente para cada genótipo, usando os
+p-valores de `comparacao_estresse.csv`. Portanto, uma banda é elegível quando
+apresenta `p_valor <= 0,05` para aquele genótipo. Não há filtro de Spearman:
+as cinco bandas são ordenadas diretamente pelo menor p-valor.
 
 VIP (PLS-DA)
 ------------
@@ -47,23 +47,16 @@ ao estresse, não apenas montar um classificador enxuto.
 
 Top 5
 -----
-Interseção dos quatro critérios da metodologia, aplicados nesta ordem:
-1. significativa   -- q < 0.05 no teste por dia (efeito de condição) ou na
-                      análise temporal;
-2. pouco colinear  -- é representante de grupo, e o par a par contra as já
-                      escolhidas fica abaixo de |r| = 0.80;
-3. VIP > 1;
-4. confirmada pelo Boruta.
-
-O desempate entre as candidatas é a média das posições em VIP e na importância
-do Boruta, o que evita que uma escala domine a outra.
+Para cada genótipo, seleciona as cinco bandas representativas com `p_valor <=
+0,05`, em ordem crescente de p-valor. VIP, Boruta e os q-valores continuam
+sendo exportados como resultados complementares, mas não definem o ranking.
 
 Saídas (uma pasta por genótipo)
 -------------------------------
 - `<GENOTIPO>/pls_da_validacao.csv`   acurácia por número de componentes
 - `<GENOTIPO>/vip_pls_da.csv`         VIP de cada banda representativa
 - `<GENOTIPO>/boruta_resultado.csv`   acertos e decisão do Boruta
-- `<GENOTIPO>/selecao_variaveis.csv`  os quatro critérios lado a lado
+- `<GENOTIPO>/selecao_variaveis.csv`  p-valor e métricas complementares
 - `<GENOTIPO>/top5_bandas.csv`        as Top 5 do genótipo
 - `top5_bandas_por_genotipo.csv`      as Top 5 dos três, empilhadas
 
@@ -119,7 +112,6 @@ BORUTA_ARVORES = 200
 BORUTA_ALPHA = 0.05
 
 TOP_K = 5
-CORR_MAX = 0.80
 
 SEMENTE = 42
 
@@ -139,7 +131,7 @@ def carregar_bandas_representativas(
 
 
 def carregar_significancia(bandas: np.ndarray, genotipo: str) -> pd.DataFrame:
-    """Menor q por banda: condição dentro do genótipo e evolução temporal."""
+    """Menores p e q do efeito de condição para um genótipo."""
     df = pd.DataFrame({"banda_nm": bandas})
 
     estresse = (
@@ -149,11 +141,16 @@ def carregar_significancia(bandas: np.ndarray, genotipo: str) -> pd.DataFrame:
     if not estresse.empty:
         estresse = estresse[estresse["genotipo"] == genotipo]
     if not estresse.empty:
+        df["p_condicao"] = (
+            estresse.groupby("banda_nm")["p_valor"].min()
+            .reindex(bandas).to_numpy()
+        )
         df["q_condicao"] = (
             estresse.groupby("banda_nm")["q_fdr"].min()
             .reindex(bandas).to_numpy()
         )
     else:
+        df["p_condicao"] = np.nan
         df["q_condicao"] = np.nan
 
     if TEMPORAL.exists():
@@ -165,10 +162,7 @@ def carregar_significancia(bandas: np.ndarray, genotipo: str) -> pd.DataFrame:
     else:
         df["q_tempo"] = np.nan
 
-    df["significativa"] = (
-        (df["q_condicao"] < ALPHA).fillna(False)
-        | (df["q_tempo"] < ALPHA).fillna(False)
-    )
+    df["significativa"] = (df["p_condicao"] <= ALPHA).fillna(False)
     return df
 
 
@@ -283,47 +277,18 @@ def boruta(
     })
 
 
-def spearman_par(a: np.ndarray, b: np.ndarray) -> float:
-    """|Spearman| entre duas bandas."""
-    ra = pd.Series(a).rank(method="average").to_numpy()
-    rb = pd.Series(b).rank(method="average").to_numpy()
-    ra = ra - ra.mean()
-    rb = rb - rb.mean()
-    denominador = np.sqrt((ra**2).sum()) * np.sqrt((rb**2).sum())
-    if denominador == 0:
-        return 1.0
-    return abs(float((ra * rb).sum() / denominador))
-
-
 def selecionar_top(
     df: pd.DataFrame,
-    X: np.ndarray,
 ) -> pd.DataFrame:
-    """Top K bandas pelos quatro critérios, com filtro de colinearidade."""
-    candidatas = df[
-        df["significativa"] & (df["vip"] > VIP_MIN) & df["confirmada_boruta"]
-    ].copy()
+    """Top K bandas significativas, ordenadas pelo p-valor do genótipo."""
+    candidatas = df[df["significativa"]].copy()
 
     if candidatas.empty:
         return candidatas
 
-    candidatas["rank_vip"] = candidatas["vip"].rank(ascending=False)
-    candidatas["rank_boruta"] = candidatas["importancia_media"].rank(ascending=False)
-    candidatas["score"] = (candidatas["rank_vip"] + candidatas["rank_boruta"]) / 2
-    candidatas = candidatas.sort_values("score")
-
-    escolhidas: list[int] = []
-    for posicao in candidatas.index:
-        if len(escolhidas) >= TOP_K:
-            break
-        coluna = int(candidatas.loc[posicao, "coluna"])
-        if all(
-            spearman_par(X[:, coluna], X[:, int(candidatas.loc[e, "coluna"])]) < CORR_MAX
-            for e in escolhidas
-        ):
-            escolhidas.append(posicao)
-
-    top = candidatas.loc[escolhidas].copy()
+    top = candidatas.sort_values(
+        ["p_condicao", "banda_nm"], kind="stable"
+    ).head(TOP_K).copy()
     top.insert(0, "posicao", np.arange(1, len(top) + 1))
     return top
 
@@ -380,6 +345,7 @@ def analisar_genotipo(
     })
     df = pd.concat([df, df_boruta], axis=1)
     df["q_condicao"] = df_sig["q_condicao"].to_numpy()
+    df["p_condicao"] = df_sig["p_condicao"].to_numpy()
     df["q_tempo"] = df_sig["q_tempo"].to_numpy()
     df["significativa"] = df_sig["significativa"].to_numpy()
     df["criterios_atendidos"] = (
@@ -388,7 +354,7 @@ def analisar_genotipo(
         + df["confirmada_boruta"].astype(int)
     )
 
-    top = selecionar_top(df, X)
+    top = selecionar_top(df)
 
     df_cv.to_csv(saida / "pls_da_validacao.csv", sep=";", index=False)
     df[["banda_nm", "vip", "vip_acima_de_1"]].to_csv(
@@ -410,18 +376,18 @@ def analisar_genotipo(
     print(f"\nBoruta: {confirmadas} confirmadas, "
           f"{int((df['decisao_boruta'] == 'rejeitada').sum())} rejeitadas, "
           f"{int((df['decisao_boruta'] == 'tentativa').sum())} indefinidas")
-    print(f"Bandas que atendem aos três critérios: "
-          f"{int((df['criterios_atendidos'] == 3).sum())}")
+    print(f"Bandas com p_valor <= {ALPHA:.2f}: "
+          f"{int(df['significativa'].sum())}")
 
     if top.empty:
-        print("\nNenhuma banda atendeu aos quatro critérios simultaneamente.")
+        print("\nNenhuma banda atingiu p_valor <= 0,05.")
     else:
         print(f"\nTop {len(top)} bandas:")
         for _, row in top.iterrows():
             print(f"  {int(row['posicao'])}. {int(row['banda_nm']):4d} nm  "
                   f"VIP {row['vip']:5.2f}  "
                   f"Boruta {row['prop_acertos']:5.1%} acertos  "
-                  f"q_condicao {row['q_condicao']:.2e}")
+                  f"p_valor {row['p_condicao']:.2e}")
 
     print(f"\nResultados de {genotipo} salvos em {saida}")
 
@@ -464,7 +430,7 @@ def main() -> None:
         )
         print(f"\nTop 5 dos {len(tops)} genótipos em {consolidado}")
     else:
-        print("\nNenhum genótipo produziu bandas nos quatro critérios.")
+        print("\nNenhum genótipo produziu bandas com p_valor <= 0,05.")
 
 
 if __name__ == "__main__":
