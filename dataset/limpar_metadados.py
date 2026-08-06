@@ -19,7 +19,7 @@ espectral em si nunca e alterada):
    nessas linhas ja estava correta).
 
 4. `condicao` errada em 16 linhas, mesmo efeito de fill-down do caso 2:
-   `B2_CD202_NIRRIG_REPROD00000-07` (D04M) e `B4_EMB48_NIRR_REP_RECUP00000-07`
+   `B202_NIRRIG_CD2_REPROD00000-07` (D04M) e `B4_EMB48_NIRR_REP_RECUP00000-07`
    (D09T) aparecem como "IRRIG" repetindo a condicao do grupo anterior, embora
    `nomenclaura` identifique as duas series como nao irrigadas. O token de
    condicao varia entre as duas fases do experimento -- `IRRIG`/`NIRRIG` nos
