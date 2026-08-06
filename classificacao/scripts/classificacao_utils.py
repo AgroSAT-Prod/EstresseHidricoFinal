@@ -61,6 +61,7 @@ K_FOLDS = 5
 TOP_K = 5
 SEMENTE = 42
 GENOTIPOS = ("BR16", "CD202", "EMB48")
+TURNO_AVALIACAO = "manha"
 GRUPO_VALIDACAO = "nomenclaura"
 ESTRATEGIA_VALIDACAO = "StratifiedGroupKFold"
 
@@ -166,7 +167,7 @@ def selecionar_colunas(espectro: np.ndarray, w: np.ndarray, bandas: list[int]) -
 
 
 def montar_cenarios(modo: str, estagio: str) -> list[dict[str, object]]:
-    meta, espectro, w = carregar(estagio)
+    meta, espectro, w = carregar(estagio, turno=TURNO_AVALIACAO)
     cenarios: list[dict[str, object]] = []
 
     if modo in ("agrupado", "ambos"):
@@ -418,6 +419,7 @@ def avaliar_cenario(
             "bandas_nm": ", ".join(str(b) for b in bandas),
             "estrategia_validacao": ESTRATEGIA_VALIDACAO,
             "grupo_validacao": GRUPO_VALIDACAO,
+            "turno_avaliacao": TURNO_AVALIACAO,
             "k_folds": K_FOLDS,
             "amostras": len(y),
             "semente": SEMENTE,
@@ -439,6 +441,7 @@ def executar_modelo(
 ) -> pd.DataFrame:
     print(f"Estagio de preprocessamento: {estagio}")
     print(f"Modo de bandas: {modo}")
+    print(f"Turno avaliado: {TURNO_AVALIACAO}")
     print(f"Avaliacao: {ESTRATEGIA_VALIDACAO} com k={K_FOLDS} e grupo={GRUPO_VALIDACAO}")
     print(f"Salvar CSVs: {'sim' if salvar_csv else 'nao'}")
 

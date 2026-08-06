@@ -1,0 +1,6 @@
+modelo;modo;genotipo;fold;iteracoes_usadas;iteracoes_maximas;classe_positiva
+gradient_boosting;agrupado;todos;1;148;500;NIRRIG
+gradient_boosting;agrupado;todos;2;406;500;NIRRIG
+gradient_boosting;agrupado;todos;3;500;500;NIRRIG
+gradient_boosting;agrupado;todos;4;498;500;NIRRIG
+gradient_boosting;agrupado;todos;5;500;500;NIRRIG

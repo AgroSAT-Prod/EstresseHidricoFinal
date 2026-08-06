@@ -1,6 +1,6 @@
 modelo;modo;genotipo;fold;iteracoes_usadas;iteracoes_maximas;classe_positiva
-gradient_boosting;por_genotipo;BR16;1;234;500;NIRRIG
-gradient_boosting;por_genotipo;BR16;2;223;500;NIRRIG
-gradient_boosting;por_genotipo;BR16;3;198;500;NIRRIG
-gradient_boosting;por_genotipo;BR16;4;429;500;NIRRIG
-gradient_boosting;por_genotipo;BR16;5;472;500;NIRRIG
+gradient_boosting;por_genotipo;BR16;1;203;500;NIRRIG
+gradient_boosting;por_genotipo;BR16;2;500;500;NIRRIG
+gradient_boosting;por_genotipo;BR16;3;500;500;NIRRIG
+gradient_boosting;por_genotipo;BR16;4;500;500;NIRRIG
+gradient_boosting;por_genotipo;BR16;5;500;500;NIRRIG
