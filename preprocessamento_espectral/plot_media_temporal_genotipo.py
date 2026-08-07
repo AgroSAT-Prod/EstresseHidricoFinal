@@ -125,11 +125,11 @@ def plot_painel(
                 path_effects=[pe.Stroke(linewidth=3.0, foreground="white"),
                               pe.Normal()])
 
-    ax.set_title(titulo, fontsize=11, fontweight="bold")
-    ax.set_xlabel("Comprimento de onda (nm)", fontsize=9)
-    ax.set_ylabel(unidade, fontsize=9)
+    ax.set_title(titulo, fontsize=16, fontweight="bold")
+    ax.set_xlabel("Comprimento de onda (nm)", fontsize=14)
+    ax.set_ylabel(unidade, fontsize=14)
     ax.grid(True, alpha=0.3)
-    ax.tick_params(labelsize=8)
+    ax.tick_params(labelsize=14)
 
 
 def legenda_figura(fig: plt.Figure, cores: dict[str, str]) -> None:
@@ -150,7 +150,7 @@ def legenda_figura(fig: plt.Figure, cores: dict[str, str]) -> None:
                label="Dia minimo / maximo"),
     ]
     fig.legend(handles=handles, loc="lower center", ncol=len(handles),
-               frameon=False, fontsize=10)
+               frameon=False, fontsize=14)
 
 
 def gerar_figura(
