@@ -1,6 +1,6 @@
 modelo;modo;genotipo;fold;kernel;C;gamma;n_support_IRRIG;n_support_NIRRIG
-svm;por_genotipo;BR16;1;rbf;1.0;scale;120;120
-svm;por_genotipo;BR16;2;rbf;1.0;scale;123;123
-svm;por_genotipo;BR16;3;rbf;1.0;scale;122;126
-svm;por_genotipo;BR16;4;rbf;1.0;scale;122;126
-svm;por_genotipo;BR16;5;rbf;1.0;scale;120;120
+svm;por_genotipo;BR16;1;rbf;1.0;scale;68;69
+svm;por_genotipo;BR16;2;rbf;1.0;scale;69;70
+svm;por_genotipo;BR16;3;rbf;1.0;scale;69;70
+svm;por_genotipo;BR16;4;rbf;1.0;scale;68;70
+svm;por_genotipo;BR16;5;rbf;1.0;scale;63;68

@@ -1,2 +1,2 @@
-modelo;modo;genotipo;estagio_preprocessamento;alvo;classe_positiva;bandas_nm;estrategia_validacao;grupo_validacao;k_folds;amostras;semente
-gradient_boosting;por_genotipo;BR16;normalizado;condicao;NIRRIG;1942, 1360, 1387, 1844, 425;StratifiedGroupKFold;nomenclaura;5;640;42
+modelo;modo;genotipo;estagio_preprocessamento;alvo;classe_positiva;bandas_nm;estrategia_validacao;grupo_validacao;turno_avaliacao;k_folds;amostras;semente
+gradient_boosting;por_genotipo;BR16;normalizado;condicao;NIRRIG;1942, 1360, 1387, 1844, 425;StratifiedGroupKFold;nomenclaura;manha;5;448;42

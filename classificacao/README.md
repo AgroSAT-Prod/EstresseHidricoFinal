@@ -13,13 +13,13 @@ Treinar e avaliar modelos de classificação usando apenas bandas hiperspectrais
 
 ## Dataset de entrada
 
-A classificação usa os CSVs espectrais já pré-processados na pasta `dataset/`. O arquivo usado depende da opção `--estagio`:
+A classificação reutiliza o carregador do experimento de normalidade. Os espectros são
+pré-processados em memória até o estágio escolhido por `--estagio` (`recortado`,
+`suavizado` ou `normalizado`), cujo padrão é `normalizado`.
 
-- `recortado`: `dataset/Unificada13052026_400_2450.csv`
-- `suavizado`: `dataset/Unificada13052026_suavizado.csv`
-- `normalizado`: `dataset/Unificada13052026_normalizado.csv`
-
-O estágio padrão é `normalizado`. Portanto, por padrão, os modelos usam `dataset/Unificada13052026_normalizado.csv` como fonte dos valores das bandas.
+Somente amostras do turno `manha` entram na classificação. D02, D03 e D09 também
+possuem coleta de tarde; excluí-la evita que esses dias tenham mais observações que os
+demais cenários.
 
 ## Modos de bandas
 
@@ -29,7 +29,7 @@ A flag `--modo` define quais bandas entram no experimento:
   (`CD202`), lidas de `selecaoVariaveis/dataset_gerado/CD202/top5_bandas.csv`. A seleção de
   variáveis roda por genótipo, então não existe mais um Top 5 do pool inteiro; o genótipo de
   referência é a constante `GENOTIPO_REFERENCIA` em `scripts/classificacao_utils.py`.
-- `por_genotipo`: executa um cenário separado para cada genótipo (`BR16`, `CD202`, `EMB48`) usando `dataset/dataset_gerado/bandas_<genotipo>.csv`.
+- `por_genotipo`: executa um cenário separado para cada genótipo (`BR16`, `CD202`, `EMB48`) usando as Top 5 bandas de `selecaoVariaveis/dataset_gerado/<genotipo>/top5_bandas.csv`.
 - `ambos`: executa os modos `agrupado` e `por_genotipo`.
 
 Quando um CSV por genótipo possui mais de 5 bandas, apenas as 5 primeiras pelo `rank` são usadas.
@@ -50,6 +50,7 @@ Essa estratégia preserva a estratificação da classe e impede que leituras com
 Os modelos avaliados são:
 
 - Random Forest
+- Gradient Boosting
 - Support Vector Machine
 - PLS-DA
 
@@ -99,6 +100,7 @@ Executar um modelo específico:
 
 ```bash
 python scripts/random_forest_top5.py --modo agrupado
+python scripts/gradient_boosting_top5.py --modo por_genotipo
 python scripts/svm_top5.py --modo por_genotipo
 python scripts/pls_da_top5.py --modo ambos
 ```
@@ -136,6 +138,7 @@ Cada pasta de modelo/cenário contém:
 Outputs específicos por modelo:
 
 - Random Forest: `importancia_bandas.csv`
+- Gradient Boosting: `importancia_permutacao.csv` e `iteracoes_boosting.csv`
 - SVM: `importancia_permutacao.csv` e `parametros_modelo.csv`
 - PLS-DA: `coeficientes_pls.csv`, `pesos_pls.csv` e `parametros_modelo.csv`
 

@@ -1,26 +1,26 @@
 modelo;modo;genotipo;fold;classe;precision;recall;f1-score;support
-random_forest;por_genotipo;CD202;1;IRRIG;1.0;0.8939393939393939;0.944;66.0
-random_forest;por_genotipo;CD202;1;NIRRIG;0.9014084507042254;1.0;0.9481481481481482;64.0
-random_forest;por_genotipo;CD202;1;accuracy;0.9461538461538461;0.9461538461538461;0.9461538461538461;0.9461538461538461
-random_forest;por_genotipo;CD202;1;macro avg;0.9507042253521127;0.946969696969697;0.9460740740740741;130.0
-random_forest;por_genotipo;CD202;1;weighted avg;0.9514626218851572;0.9461538461538461;0.9460421652421652;130.0
-random_forest;por_genotipo;CD202;2;IRRIG;0.9841269841269841;0.9538461538461539;0.96875;65.0
-random_forest;por_genotipo;CD202;2;NIRRIG;0.9545454545454546;0.984375;0.9692307692307692;64.0
-random_forest;por_genotipo;CD202;2;accuracy;0.9689922480620154;0.9689922480620154;0.9689922480620154;0.9689922480620154
-random_forest;por_genotipo;CD202;2;macro avg;0.9693362193362194;0.969110576923077;0.9689903846153847;129.0
-random_forest;por_genotipo;CD202;2;weighted avg;0.9694508764276206;0.9689922480620154;0.9689885211687538;129.0
-random_forest;por_genotipo;CD202;3;IRRIG;0.9692307692307692;0.984375;0.9767441860465116;64.0
-random_forest;por_genotipo;CD202;3;NIRRIG;0.9841269841269841;0.96875;0.9763779527559056;64.0
-random_forest;por_genotipo;CD202;3;accuracy;0.9765625;0.9765625;0.9765625;0.9765625
-random_forest;por_genotipo;CD202;3;macro avg;0.9766788766788767;0.9765625;0.9765610694012086;128.0
-random_forest;por_genotipo;CD202;3;weighted avg;0.9766788766788767;0.9765625;0.9765610694012086;128.0
-random_forest;por_genotipo;CD202;4;IRRIG;1.0;0.9538461538461539;0.9763779527559056;65.0
-random_forest;por_genotipo;CD202;4;NIRRIG;0.9552238805970149;1.0;0.9770992366412213;64.0
-random_forest;por_genotipo;CD202;4;accuracy;0.9767441860465116;0.9767441860465116;0.9767441860465116;0.9767441860465116
-random_forest;por_genotipo;CD202;4;macro avg;0.9776119402985075;0.976923076923077;0.9767385946985634;129.0
-random_forest;por_genotipo;CD202;4;weighted avg;0.9777854911489067;0.9767441860465116;0.9767357990245893;129.0
-random_forest;por_genotipo;CD202;5;IRRIG;0.9666666666666667;0.90625;0.9354838709677419;64.0
-random_forest;por_genotipo;CD202;5;NIRRIG;0.9117647058823529;0.96875;0.9393939393939394;64.0
-random_forest;por_genotipo;CD202;5;accuracy;0.9375;0.9375;0.9375;0.9375
-random_forest;por_genotipo;CD202;5;macro avg;0.9392156862745098;0.9375;0.9374389051808407;128.0
-random_forest;por_genotipo;CD202;5;weighted avg;0.9392156862745098;0.9375;0.9374389051808407;128.0
+random_forest;por_genotipo;CD202;1;IRRIG;1.0;1.0;1.0;46.0
+random_forest;por_genotipo;CD202;1;NIRRIG;1.0;1.0;1.0;45.0
+random_forest;por_genotipo;CD202;1;accuracy;1.0;1.0;1.0;1.0
+random_forest;por_genotipo;CD202;1;macro avg;1.0;1.0;1.0;91.0
+random_forest;por_genotipo;CD202;1;weighted avg;1.0;1.0;1.0;91.0
+random_forest;por_genotipo;CD202;2;IRRIG;1.0;1.0;1.0;46.0
+random_forest;por_genotipo;CD202;2;NIRRIG;1.0;1.0;1.0;45.0
+random_forest;por_genotipo;CD202;2;accuracy;1.0;1.0;1.0;1.0
+random_forest;por_genotipo;CD202;2;macro avg;1.0;1.0;1.0;91.0
+random_forest;por_genotipo;CD202;2;weighted avg;1.0;1.0;1.0;91.0
+random_forest;por_genotipo;CD202;3;IRRIG;0.9565217391304348;0.9777777777777777;0.967032967032967;45.0
+random_forest;por_genotipo;CD202;3;NIRRIG;0.9772727272727273;0.9555555555555556;0.9662921348314607;45.0
+random_forest;por_genotipo;CD202;3;accuracy;0.9666666666666667;0.9666666666666667;0.9666666666666667;0.9666666666666667
+random_forest;por_genotipo;CD202;3;macro avg;0.966897233201581;0.9666666666666667;0.9666625509322139;90.0
+random_forest;por_genotipo;CD202;3;weighted avg;0.966897233201581;0.9666666666666667;0.9666625509322139;90.0
+random_forest;por_genotipo;CD202;4;IRRIG;1.0;1.0;1.0;46.0
+random_forest;por_genotipo;CD202;4;NIRRIG;1.0;1.0;1.0;44.0
+random_forest;por_genotipo;CD202;4;accuracy;1.0;1.0;1.0;1.0
+random_forest;por_genotipo;CD202;4;macro avg;1.0;1.0;1.0;90.0
+random_forest;por_genotipo;CD202;4;weighted avg;1.0;1.0;1.0;90.0
+random_forest;por_genotipo;CD202;5;IRRIG;0.9782608695652174;1.0;0.989010989010989;45.0
+random_forest;por_genotipo;CD202;5;NIRRIG;1.0;0.9777777777777777;0.9887640449438202;45.0
+random_forest;por_genotipo;CD202;5;accuracy;0.9888888888888889;0.9888888888888889;0.9888888888888889;0.9888888888888889
+random_forest;por_genotipo;CD202;5;macro avg;0.9891304347826086;0.9888888888888889;0.9888875169774046;90.0
+random_forest;por_genotipo;CD202;5;weighted avg;0.9891304347826086;0.9888888888888889;0.9888875169774047;90.0

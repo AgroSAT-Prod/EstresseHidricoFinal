@@ -1,6 +1,6 @@
 modelo;modo;genotipo;fold;kernel;C;gamma;n_support_IRRIG;n_support_NIRRIG
-svm;por_genotipo;EMB48;1;rbf;1.0;scale;91;97
-svm;por_genotipo;EMB48;2;rbf;1.0;scale;93;97
-svm;por_genotipo;EMB48;3;rbf;1.0;scale;89;91
-svm;por_genotipo;EMB48;4;rbf;1.0;scale;84;86
-svm;por_genotipo;EMB48;5;rbf;1.0;scale;93;95
+svm;por_genotipo;EMB48;1;rbf;1.0;scale;43;47
+svm;por_genotipo;EMB48;2;rbf;1.0;scale;44;48
+svm;por_genotipo;EMB48;3;rbf;1.0;scale;39;45
+svm;por_genotipo;EMB48;4;rbf;1.0;scale;35;39
+svm;por_genotipo;EMB48;5;rbf;1.0;scale;44;48
