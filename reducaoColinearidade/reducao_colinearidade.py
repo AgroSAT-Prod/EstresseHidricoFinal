@@ -99,7 +99,12 @@ def spearman_matriz(espectro: np.ndarray) -> np.ndarray:
     return np.clip(z.T @ z, -1.0, 1.0)
 
 
-def agrupar(corr: np.ndarray, w: np.ndarray) -> np.ndarray:
+def agrupar(
+    corr: np.ndarray,
+    w: np.ndarray,
+    limiar_r: float = LIMIAR_R,
+    janela_nm: float = JANELA_NM,
+) -> np.ndarray:
     """Agrupa bandas contíguas por ligação completa dentro da janela.
 
     Varre o espectro em ordem crescente de comprimento de onda e estende o
@@ -114,9 +119,9 @@ def agrupar(corr: np.ndarray, w: np.ndarray) -> np.ndarray:
     atual = 0
 
     for j in range(1, len(w)):
-        dentro_janela = w[j] - w[membros[0]] < JANELA_NM
+        dentro_janela = w[j] - w[membros[0]] < janela_nm
         correlacionada = dentro_janela and np.all(
-            np.abs(corr[j, membros]) > LIMIAR_R
+            np.abs(corr[j, membros]) > limiar_r
         )
         if correlacionada:
             membros.append(j)
