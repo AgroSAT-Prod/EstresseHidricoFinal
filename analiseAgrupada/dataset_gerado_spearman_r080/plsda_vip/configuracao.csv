@@ -1,0 +1,8 @@
+dia;genotipos;amostras;representantes_spearman;criterio_spearman;limiar_r;janela_nm;validacao;k;seeds;n_dobras;ranking
+D02;BR16, CD202, EMB48;192;206;|r| > 0,80;0.8;10;StratifiedKFold;4;42, 43, 44, 45, 46;20;VIP
+D03;BR16, CD202, EMB48;192;206;|r| > 0,80;0.8;10;StratifiedKFold;4;42, 43, 44, 45, 46;20;VIP
+D04;BR16, CD202, EMB48;192;206;|r| > 0,80;0.8;10;StratifiedKFold;4;42, 43, 44, 45, 46;20;VIP
+D05;BR16, CD202, EMB48;192;206;|r| > 0,80;0.8;10;StratifiedKFold;4;42, 43, 44, 45, 46;20;VIP
+D06;BR16, CD202, EMB48;192;206;|r| > 0,80;0.8;10;StratifiedKFold;4;42, 43, 44, 45, 46;20;VIP
+D09;BR16, CD202, EMB48;196;206;|r| > 0,80;0.8;10;StratifiedKFold;4;42, 43, 44, 45, 46;20;VIP
+D10;BR16, CD202, EMB48;192;206;|r| > 0,80;0.8;10;StratifiedKFold;4;42, 43, 44, 45, 46;20;VIP

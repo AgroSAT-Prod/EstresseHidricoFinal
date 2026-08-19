@@ -1,0 +1,22 @@
+genotipo;dia;turno;amostras;bandas_originais;representantes_spearman;limiar_spearman_abs_rho;n_arvores;validacao;classe_positiva
+BR16;D02;manha;64;2051;206;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+BR16;D03;manha;64;2051;206;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+BR16;D04;manha;64;2051;206;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+BR16;D05;manha;64;2051;207;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+BR16;D06;manha;64;2051;207;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+BR16;D09;manha;64;2051;206;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+BR16;D10;manha;64;2051;206;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+CD202;D02;manha;64;2051;206;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+CD202;D03;manha;64;2051;207;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+CD202;D04;manha;64;2051;206;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+CD202;D05;manha;64;2051;206;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+CD202;D06;manha;64;2051;206;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+CD202;D09;manha;68;2051;207;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+CD202;D10;manha;64;2051;207;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+EMB48;D02;manha;64;2051;206;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+EMB48;D03;manha;64;2051;206;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+EMB48;D04;manha;64;2051;206;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+EMB48;D05;manha;64;2051;207;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+EMB48;D06;manha;64;2051;208;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+EMB48;D09;manha;64;2051;206;0.8;100;GroupKFold leave-one-block-out;NIRRIG
+EMB48;D10;manha;64;2051;206;0.8;100;GroupKFold leave-one-block-out;NIRRIG

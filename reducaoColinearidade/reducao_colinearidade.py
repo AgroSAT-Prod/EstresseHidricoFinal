@@ -54,6 +54,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from scipy.stats import t as t_student
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parent / "preprocessamento_espectral"))
@@ -130,6 +131,37 @@ def agrupar(
             membros = [j]
         grupo[j] = atual
 
+    return grupo
+
+
+def agrupar_por_pvalor(
+    corr: np.ndarray,
+    w: np.ndarray,
+    n_amostras: int,
+    p_limiar: float = 0.0001,
+    janela_nm: float = JANELA_NM,
+) -> np.ndarray:
+    """Agrupa bandas adjacentes por Spearman significativo em janela local.
+
+    O p-valor bilateral usa a aproximação t de Spearman, com ``n - 2`` graus
+    de liberdade. Tal como em :func:`agrupar`, a regra é ligação completa:
+    toda banda nova precisa ter p < limite frente a cada membro do grupo.
+    """
+    if n_amostras <= 2:
+        raise ValueError("São necessárias ao menos três amostras para Spearman.")
+    grupo = np.zeros(len(w), dtype=int)
+    membros, atual = [0], 0
+    for j in range(1, len(w)):
+        dentro_janela = w[j] - w[membros[0]] < janela_nm
+        r = np.clip(corr[j, membros], -1 + 1e-15, 1 - 1e-15)
+        estat_t = np.abs(r) * np.sqrt((n_amostras - 2) / np.maximum(1 - r**2, 1e-30))
+        p = 2 * t_student.sf(estat_t, df=n_amostras - 2)
+        if dentro_janela and np.all(p < p_limiar):
+            membros.append(j)
+        else:
+            atual += 1
+            membros = [j]
+        grupo[j] = atual
     return grupo
 
 
