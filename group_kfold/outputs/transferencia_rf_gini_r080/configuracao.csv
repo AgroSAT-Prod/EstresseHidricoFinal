@@ -1,0 +1,2 @@
+spearman;janela_nm;ranking;top_k_por_origem;n_arvores;seeds;validacao;turno;estagio
+|r| > 0,80;10;importância Gini;5;500;42, 43, 44, 45, 46;"teste externo por genótipo; média de 5 sementes";manha;normalizado
