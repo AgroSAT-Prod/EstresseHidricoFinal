@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import sys
+import argparse
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -19,7 +20,7 @@ sys.path.extend([str(ROOT / "testeDeNormalidade"), str(ROOT / "reducaoColinearid
 from shapiro_normalidade import carregar  # noqa: E402
 from reducao_colinearidade import agrupar, agrupar_por_pvalor, spearman_matriz  # noqa: E402
 
-SAIDA = ROOT / "analiseBR16PorDia" / "dataset_gerado" / "plsda_vip_spearman_p0001_5seeds_kfold4"
+BASE_SAIDA = ROOT / "analiseBR16PorDia" / "dataset_gerado"
 GENOTIPOS, DIAS = ["BR16", "CD202", "EMB48"], ["D02", "D03", "D04", "D05", "D06", "D09", "D10"]
 CORES = {"BR16": "#4C78A8", "CD202": "#F58518", "EMB48": "#54A24B"}
 SEEDS, N_COMPONENTES, TOP_K = (42, 43, 44, 45, 46), 2, 5
@@ -37,13 +38,13 @@ def vip(pls):
     return np.sqrt(W.shape[0] * ((W ** 2) @ s) / total) if total else np.zeros(W.shape[0])
 
 
-def analisar(meta, X, w, genotipo, dia, criterio="p"):
+def analisar(meta, X, w, genotipo, dia, p_limiar, criterio="p"):
     mascara = meta.dia.eq(dia) if genotipo == "todos" else (meta.genotipo.eq(genotipo) & meta.dia.eq(dia))
     Xd = X[mascara.to_numpy()]
     y = meta.loc[mascara, "condicao"].eq("NIRRIG").astype(int).to_numpy()
     corr = spearman_matriz(Xd)
     grupos = (agrupar(corr, w, limiar_r=0.80, janela_nm=10.0) if criterio == "r"
-              else agrupar_por_pvalor(corr, w, n_amostras=len(y), p_limiar=0.0001, janela_nm=10.0))
+              else agrupar_por_pvalor(corr, w, n_amostras=len(y), p_limiar=p_limiar, janela_nm=10.0))
     reps = np.array([idx[len(idx) // 2] for g in np.unique(grupos) if (idx := np.flatnonzero(grupos == g)).size])
     Xr, bandas = Xd[:, reps], w[reps].astype(int)
 
@@ -106,14 +107,22 @@ def relatorio(top5, metricas):
 
 
 def main():
-    SAIDA.mkdir(parents=True, exist_ok=True)
+    parser = argparse.ArgumentParser(description="PLS-DA/VIP por dia apos agrupamento Spearman.")
+    parser.add_argument("--p-limiar", type=float, default=0.0001)
+    parser.add_argument("--saida", type=Path, default=None)
+    args = parser.parse_args()
+    if not 0 < args.p_limiar < 1:
+        parser.error("--p-limiar deve estar entre 0 e 1.")
+    codigo_p = f"p{args.p_limiar:.4g}".replace(".", "")
+    saida = args.saida or BASE_SAIDA / f"plsda_vip_spearman_{codigo_p}_5seeds_kfold4"
+    saida.mkdir(parents=True, exist_ok=True)
     meta, X, w = carregar("normalizado", turno="manha")
     tops, metricas, configs = [], [], []
     for g in GENOTIPOS:
         for d in DIAS:
             print(g, d, flush=True)
-            imp, folds, pred, vip_folds, n, reps = analisar(meta, X, w, g, d)
-            pasta = SAIDA / g / d; pasta.mkdir(parents=True, exist_ok=True)
+            imp, folds, pred, vip_folds, n, reps = analisar(meta, X, w, g, d, args.p_limiar)
+            pasta = saida / g / d; pasta.mkdir(parents=True, exist_ok=True)
             imp.to_csv(pasta / "vip_bandas.csv", sep=";", index=False); folds.to_csv(pasta / "metricas_folds.csv", sep=";", index=False)
             pred.to_csv(pasta / "predicoes.csv", sep=";", index=False); vip_folds.to_csv(pasta / "vip_por_fold.csv", sep=";", index=False)
             t = imp.head(TOP_K).copy(); t.insert(0, "dia", d); t.insert(0, "genotipo", g); tops.append(t)
@@ -128,11 +137,11 @@ def main():
                 linha.update({c: media, f"{c}_dp": dp, f"{c}_variancia": valores.var(ddof=1),
                               f"{c}_ic95_inf": max(limite_inf, media - margem), f"{c}_ic95_sup": min(limite_sup, media + margem)})
             metricas.append(linha)
-            configs.append({"genotipo":g, "dia":d, "amostras":n, "bandas_originais":len(w), "representantes_spearman":reps, "criterio_spearman":"p < 0,0001", "p_limiar":.0001, "janela_nm":10, "validacao":"StratifiedKFold", "k":4, "seeds":", ".join(map(str, SEEDS)), "n_dobras":len(folds), "n_componentes":N_COMPONENTES, "ranking":"VIP"})
+            configs.append({"genotipo":g, "dia":d, "amostras":n, "bandas_originais":len(w), "representantes_spearman":reps, "criterio_spearman":f"p < {args.p_limiar:.4g}", "p_limiar":args.p_limiar, "janela_nm":10, "validacao":"StratifiedKFold", "k":4, "seeds":", ".join(map(str, SEEDS)), "n_dobras":len(folds), "n_componentes":N_COMPONENTES, "ranking":"VIP"})
     top5, met = pd.concat(tops, ignore_index=True), pd.DataFrame(metricas)
-    top5.to_csv(SAIDA / "top5_bandas_vip_por_dia_genotipo.csv", sep=";", index=False); met.to_csv(SAIDA / "metricas_plsda_por_dia_genotipo.csv", sep=";", index=False); pd.DataFrame(configs).to_csv(SAIDA / "configuracao.csv", sep=";", index=False)
-    (SAIDA / "relatorio_top5_vip.md").write_text(relatorio(top5, met), encoding="utf-8")
-    fig = plotar(top5); fig.savefig(SAIDA / "top5_bandas_vip_por_dia_genotipo.png", dpi=300, bbox_inches="tight"); fig.savefig(SAIDA / "top5_bandas_vip_por_dia_genotipo.pdf", bbox_inches="tight"); plt.close(fig)
+    top5.to_csv(saida / "top5_bandas_vip_por_dia_genotipo.csv", sep=";", index=False); met.to_csv(saida / "metricas_plsda_por_dia_genotipo.csv", sep=";", index=False); pd.DataFrame(configs).to_csv(saida / "configuracao.csv", sep=";", index=False)
+    (saida / "relatorio_top5_vip.md").write_text(relatorio(top5, met), encoding="utf-8")
+    fig = plotar(top5); fig.savefig(saida / "top5_bandas_vip_por_dia_genotipo.png", dpi=300, bbox_inches="tight"); fig.savefig(saida / "top5_bandas_vip_por_dia_genotipo.pdf", bbox_inches="tight"); plt.close(fig)
 
 
 if __name__ == "__main__": main()
