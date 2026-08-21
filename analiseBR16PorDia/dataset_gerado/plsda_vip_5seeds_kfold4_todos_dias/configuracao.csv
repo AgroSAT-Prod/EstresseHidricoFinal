@@ -1,0 +1,4 @@
+genotipo;dias;amostras;bandas_candidatas;origem_bandas;validacao;k;seeds;n_dobras;n_componentes;ranking
+BR16;D02, D03, D04, D05, D06, D09, D10;448;27;união das Top 5 VIP das runs diárias;StratifiedKFold;4;42, 43, 44, 45, 46;20;2;VIP
+CD202;D02, D03, D04, D05, D06, D09, D10;452;35;união das Top 5 VIP das runs diárias;StratifiedKFold;4;42, 43, 44, 45, 46;20;2;VIP
+EMB48;D02, D03, D04, D05, D06, D09, D10;448;31;união das Top 5 VIP das runs diárias;StratifiedKFold;4;42, 43, 44, 45, 46;20;2;VIP

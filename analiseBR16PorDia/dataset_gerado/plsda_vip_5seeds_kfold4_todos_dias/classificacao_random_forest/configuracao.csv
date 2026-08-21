@@ -1,0 +1,4 @@
+genotipo;amostras;bandas_nm;origem_bandas;modelo;n_estimators;class_weight;validacao;k;grupo;semente;turno
+BR16;448;1963, 1953, 1951, 405, 1943;Top 5 VIP consolidado dos sete dias;RandomForestClassifier;500;balanced;StratifiedGroupKFold;5;nomenclaura;42;manha
+CD202;452;1480, 1997, 2007, 1987, 1470;Top 5 VIP consolidado dos sete dias;RandomForestClassifier;500;balanced;StratifiedGroupKFold;5;nomenclaura;42;manha
+EMB48;448;1943, 1939, 1938, 1948, 1933;Top 5 VIP consolidado dos sete dias;RandomForestClassifier;500;balanced;StratifiedGroupKFold;5;nomenclaura;42;manha

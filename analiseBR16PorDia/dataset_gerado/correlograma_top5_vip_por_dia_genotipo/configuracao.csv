@@ -1,0 +1,2 @@
+fonte_bandas;metodo;turno;genotipos;dias;bandas_por_matriz
+C:\Users\ResTIC55\Desktop\EstresseHidricoFinal\analiseBR16PorDia\dataset_gerado\plsda_vip_5seeds_kfold4\top5_bandas_vip_por_dia_genotipo.csv;Spearman;manha;BR16, CD202, EMB48;D02, D03, D04, D05, D06, D09, D10;5

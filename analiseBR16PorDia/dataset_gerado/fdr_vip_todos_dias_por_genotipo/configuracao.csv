@@ -1,0 +1,4 @@
+genotipo;selecoes_top5_diarias;bandas_unicas_testadas;bandas_q_fdr_le_0_05;amostras;teste;correcao;alfa_fdr;modelo;componentes
+BR16;35;27;25;448;Mann-Whitney bilateral;Benjamini-Hochberg;0.05;PLS-DA;2
+CD202;35;35;31;452;Mann-Whitney bilateral;Benjamini-Hochberg;0.05;PLS-DA;2
+EMB48;35;31;31;448;Mann-Whitney bilateral;Benjamini-Hochberg;0.05;PLS-DA;2
