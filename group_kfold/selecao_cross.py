@@ -7,7 +7,7 @@ Contem o que os tres scripts de `group_kfold` usam:
   genotipo x dia (`comparacao_estresse.csv`);
 - a selecao das top-K bandas de um genotipo num dia (representantes
   Spearman + significancia q_FDR<=0,05 + VIP do PLS-DA), identica a regua de
-  `analiseBR16PorDia/spearman_plsda_br16_manha.py`;
+  `analisePorDia/scripts/spearman_plsda_br16_manha.py`;
 - o recorte do espectro nas bandas selecionadas;
 - os modelos (PLS-DA e Random Forest) e as metricas de classificacao,
   incluindo balanced accuracy.
@@ -41,7 +41,7 @@ PROJECT_ROOT = ROOT.parent
 for sub in (
     "testeDeNormalidade",
     "reducaoColinearidade",
-    "analiseBR16PorDia",
+    "analisePorDia/scripts",
     "classificacao/scripts",
 ):
     sys.path.insert(0, str(PROJECT_ROOT / sub))
@@ -67,7 +67,7 @@ TOP_K = 5
 SEMENTE = 42
 
 COMPARACAO_ESTRESSE = (
-    PROJECT_ROOT / "testeDiferencaSignificativa" / "dataset_gerado"
+    PROJECT_ROOT / "testeDiferencaSignificativa" / "resultados" / "dataset_gerado"
     / "comparacao_estresse.csv"
 )
 
