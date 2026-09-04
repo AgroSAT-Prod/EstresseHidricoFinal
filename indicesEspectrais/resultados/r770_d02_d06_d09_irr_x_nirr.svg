@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="670" viewBox="0 0 1500 670">
+<rect width="100%" height="100%" fill="white"/>
+<text x="750.0" y="42.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" font-weight="bold" fill="#1a1a1a">Reflectância bruta R770: IRRIG × NIRRIG</text>
+<text x="750.0" y="72.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="normal" fill="#4f5964">Leituras do turno da manhã; pontos = média e traços = IC de 95%</text>
+<line x1="105" y1="555.0" x2="1460" y2="555.0" stroke="#d7dde3" stroke-width="1"/>
+<text x="93.0" y="560.0" text-anchor="end" font-family="Arial, sans-serif" font-size="12" font-weight="normal" fill="#4f5964">0.420</text>
+<line x1="105" y1="471.0" x2="1460" y2="471.0" stroke="#d7dde3" stroke-width="1"/>
+<text x="93.0" y="476.0" text-anchor="end" font-family="Arial, sans-serif" font-size="12" font-weight="normal" fill="#4f5964">0.443</text>
+<line x1="105" y1="387.0" x2="1460" y2="387.0" stroke="#d7dde3" stroke-width="1"/>
+<text x="93.0" y="392.0" text-anchor="end" font-family="Arial, sans-serif" font-size="12" font-weight="normal" fill="#4f5964">0.466</text>
+<line x1="105" y1="303.0" x2="1460" y2="303.0" stroke="#d7dde3" stroke-width="1"/>
+<text x="93.0" y="308.0" text-anchor="end" font-family="Arial, sans-serif" font-size="12" font-weight="normal" fill="#4f5964">0.489</text>
+<line x1="105" y1="219.0" x2="1460" y2="219.0" stroke="#d7dde3" stroke-width="1"/>
+<text x="93.0" y="224.0" text-anchor="end" font-family="Arial, sans-serif" font-size="12" font-weight="normal" fill="#4f5964">0.511</text>
+<line x1="105" y1="135.0" x2="1460" y2="135.0" stroke="#d7dde3" stroke-width="1"/>
+<text x="93.0" y="140.0" text-anchor="end" font-family="Arial, sans-serif" font-size="12" font-weight="normal" fill="#4f5964">0.534</text>
+<line x1="105" y1="135" x2="105" y2="555" stroke="#45505c" stroke-width="1.4"/>
+<text x="25.0" y="345.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a1a">Reflectância</text>
+<text x="330.8" y="115.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="bold" fill="#1a1a1a">D02</text>
+<line x1="143.3" y1="362.2" x2="143.3" y2="313.8" stroke="#29323b" stroke-width="2"/>
+<line x1="135.3" y1="362.2" x2="151.3" y2="362.2" stroke="#29323b" stroke-width="2"/>
+<line x1="135.3" y1="313.8" x2="151.3" y2="313.8" stroke="#29323b" stroke-width="2"/>
+<circle cx="143.3" cy="338.0" r="9" fill="#2a78d6" stroke="white" stroke-width="2"/>
+<line x1="217.3" y1="315.6" x2="217.3" y2="264.2" stroke="#29323b" stroke-width="2"/>
+<line x1="209.3" y1="315.6" x2="225.3" y2="315.6" stroke="#29323b" stroke-width="2"/>
+<line x1="209.3" y1="264.2" x2="225.3" y2="264.2" stroke="#29323b" stroke-width="2"/>
+<circle cx="217.3" cy="289.9" r="9" fill="#eb6834" stroke="white" stroke-width="2"/>
+<text x="180.3" y="583.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">BR16</text>
+<line x1="293.8" y1="422.1" x2="293.8" y2="379.0" stroke="#29323b" stroke-width="2"/>
+<line x1="285.8" y1="422.1" x2="301.8" y2="422.1" stroke="#29323b" stroke-width="2"/>
+<line x1="285.8" y1="379.0" x2="301.8" y2="379.0" stroke="#29323b" stroke-width="2"/>
+<circle cx="293.8" cy="400.5" r="9" fill="#2a78d6" stroke="white" stroke-width="2"/>
+<line x1="367.8" y1="369.1" x2="367.8" y2="332.3" stroke="#29323b" stroke-width="2"/>
+<line x1="359.8" y1="369.1" x2="375.8" y2="369.1" stroke="#29323b" stroke-width="2"/>
+<line x1="359.8" y1="332.3" x2="375.8" y2="332.3" stroke="#29323b" stroke-width="2"/>
+<circle cx="367.8" cy="350.7" r="9" fill="#eb6834" stroke="white" stroke-width="2"/>
+<text x="330.8" y="583.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">CD202</text>
+<line x1="444.4" y1="417.9" x2="444.4" y2="370.4" stroke="#29323b" stroke-width="2"/>
+<line x1="436.4" y1="417.9" x2="452.4" y2="417.9" stroke="#29323b" stroke-width="2"/>
+<line x1="436.4" y1="370.4" x2="452.4" y2="370.4" stroke="#29323b" stroke-width="2"/>
+<circle cx="444.4" cy="394.1" r="9" fill="#2a78d6" stroke="white" stroke-width="2"/>
+<line x1="518.4" y1="358.4" x2="518.4" y2="322.6" stroke="#29323b" stroke-width="2"/>
+<line x1="510.4" y1="358.4" x2="526.4" y2="358.4" stroke="#29323b" stroke-width="2"/>
+<line x1="510.4" y1="322.6" x2="526.4" y2="322.6" stroke="#29323b" stroke-width="2"/>
+<circle cx="518.4" cy="340.5" r="9" fill="#eb6834" stroke="white" stroke-width="2"/>
+<text x="481.4" y="583.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">EMB48</text>
+<line x1="556.7" y1="135" x2="556.7" y2="555" stroke="#aab3bd" stroke-width="1" stroke-dasharray="4 5"/>
+<text x="782.5" y="115.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="bold" fill="#1a1a1a">D06</text>
+<line x1="594.9" y1="488.7" x2="594.9" y2="464.2" stroke="#29323b" stroke-width="2"/>
+<line x1="586.9" y1="488.7" x2="602.9" y2="488.7" stroke="#29323b" stroke-width="2"/>
+<line x1="586.9" y1="464.2" x2="602.9" y2="464.2" stroke="#29323b" stroke-width="2"/>
+<circle cx="594.9" cy="476.5" r="9" fill="#2a78d6" stroke="white" stroke-width="2"/>
+<line x1="668.9" y1="258.7" x2="668.9" y2="232.0" stroke="#29323b" stroke-width="2"/>
+<line x1="660.9" y1="258.7" x2="676.9" y2="258.7" stroke="#29323b" stroke-width="2"/>
+<line x1="660.9" y1="232.0" x2="676.9" y2="232.0" stroke="#29323b" stroke-width="2"/>
+<circle cx="668.9" cy="245.4" r="9" fill="#eb6834" stroke="white" stroke-width="2"/>
+<text x="631.9" y="583.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">BR16</text>
+<line x1="745.5" y1="455.1" x2="745.5" y2="445.0" stroke="#29323b" stroke-width="2"/>
+<line x1="737.5" y1="455.1" x2="753.5" y2="455.1" stroke="#29323b" stroke-width="2"/>
+<line x1="737.5" y1="445.0" x2="753.5" y2="445.0" stroke="#29323b" stroke-width="2"/>
+<circle cx="745.5" cy="450.1" r="9" fill="#2a78d6" stroke="white" stroke-width="2"/>
+<line x1="819.5" y1="269.4" x2="819.5" y2="245.3" stroke="#29323b" stroke-width="2"/>
+<line x1="811.5" y1="269.4" x2="827.5" y2="269.4" stroke="#29323b" stroke-width="2"/>
+<line x1="811.5" y1="245.3" x2="827.5" y2="245.3" stroke="#29323b" stroke-width="2"/>
+<circle cx="819.5" cy="257.3" r="9" fill="#eb6834" stroke="white" stroke-width="2"/>
+<text x="782.5" y="583.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">CD202</text>
+<line x1="896.1" y1="514.4" x2="896.1" y2="451.0" stroke="#29323b" stroke-width="2"/>
+<line x1="888.1" y1="514.4" x2="904.1" y2="514.4" stroke="#29323b" stroke-width="2"/>
+<line x1="888.1" y1="451.0" x2="904.1" y2="451.0" stroke="#29323b" stroke-width="2"/>
+<circle cx="896.1" cy="482.7" r="9" fill="#2a78d6" stroke="white" stroke-width="2"/>
+<line x1="970.1" y1="229.4" x2="970.1" y2="175.6" stroke="#29323b" stroke-width="2"/>
+<line x1="962.1" y1="229.4" x2="978.1" y2="229.4" stroke="#29323b" stroke-width="2"/>
+<line x1="962.1" y1="175.6" x2="978.1" y2="175.6" stroke="#29323b" stroke-width="2"/>
+<circle cx="970.1" cy="202.5" r="9" fill="#eb6834" stroke="white" stroke-width="2"/>
+<text x="933.1" y="583.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">EMB48</text>
+<line x1="1008.3" y1="135" x2="1008.3" y2="555" stroke="#aab3bd" stroke-width="1" stroke-dasharray="4 5"/>
+<text x="1234.2" y="115.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="bold" fill="#1a1a1a">D09</text>
+<line x1="1046.6" y1="427.2" x2="1046.6" y2="381.1" stroke="#29323b" stroke-width="2"/>
+<line x1="1038.6" y1="427.2" x2="1054.6" y2="427.2" stroke="#29323b" stroke-width="2"/>
+<line x1="1038.6" y1="381.1" x2="1054.6" y2="381.1" stroke="#29323b" stroke-width="2"/>
+<circle cx="1046.6" cy="404.1" r="9" fill="#2a78d6" stroke="white" stroke-width="2"/>
+<line x1="1120.6" y1="259.5" x2="1120.6" y2="239.8" stroke="#29323b" stroke-width="2"/>
+<line x1="1112.6" y1="259.5" x2="1128.6" y2="259.5" stroke="#29323b" stroke-width="2"/>
+<line x1="1112.6" y1="239.8" x2="1128.6" y2="239.8" stroke="#29323b" stroke-width="2"/>
+<circle cx="1120.6" cy="249.7" r="9" fill="#eb6834" stroke="white" stroke-width="2"/>
+<text x="1083.6" y="583.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">BR16</text>
+<line x1="1197.2" y1="432.4" x2="1197.2" y2="385.0" stroke="#29323b" stroke-width="2"/>
+<line x1="1189.2" y1="432.4" x2="1205.2" y2="432.4" stroke="#29323b" stroke-width="2"/>
+<line x1="1189.2" y1="385.0" x2="1205.2" y2="385.0" stroke="#29323b" stroke-width="2"/>
+<circle cx="1197.2" cy="408.7" r="9" fill="#2a78d6" stroke="white" stroke-width="2"/>
+<line x1="1271.2" y1="300.2" x2="1271.2" y2="247.2" stroke="#29323b" stroke-width="2"/>
+<line x1="1263.2" y1="300.2" x2="1279.2" y2="300.2" stroke="#29323b" stroke-width="2"/>
+<line x1="1263.2" y1="247.2" x2="1279.2" y2="247.2" stroke="#29323b" stroke-width="2"/>
+<circle cx="1271.2" cy="273.7" r="9" fill="#eb6834" stroke="white" stroke-width="2"/>
+<text x="1234.2" y="583.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">CD202</text>
+<line x1="1347.7" y1="483.3" x2="1347.7" y2="461.7" stroke="#29323b" stroke-width="2"/>
+<line x1="1339.7" y1="483.3" x2="1355.7" y2="483.3" stroke="#29323b" stroke-width="2"/>
+<line x1="1339.7" y1="461.7" x2="1355.7" y2="461.7" stroke="#29323b" stroke-width="2"/>
+<circle cx="1347.7" cy="472.5" r="9" fill="#2a78d6" stroke="white" stroke-width="2"/>
+<line x1="1421.7" y1="323.9" x2="1421.7" y2="290.5" stroke="#29323b" stroke-width="2"/>
+<line x1="1413.7" y1="323.9" x2="1429.7" y2="323.9" stroke="#29323b" stroke-width="2"/>
+<line x1="1413.7" y1="290.5" x2="1429.7" y2="290.5" stroke="#29323b" stroke-width="2"/>
+<circle cx="1421.7" cy="307.2" r="9" fill="#eb6834" stroke="white" stroke-width="2"/>
+<text x="1384.7" y="583.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">EMB48</text>
+<circle cx="635.0" cy="622" r="8" fill="#2a78d6"/>
+<text x="653.0" y="627.0" text-anchor="start" font-family="Arial, sans-serif" font-size="14" font-weight="normal" fill="#1a1a1a">IRRIG</text>
+<circle cx="825.0" cy="622" r="8" fill="#eb6834"/>
+<text x="843.0" y="627.0" text-anchor="start" font-family="Arial, sans-serif" font-size="14" font-weight="normal" fill="#1a1a1a">NIRRIG</text>
+</svg>

@@ -42,12 +42,12 @@ from reducao_colinearidade import agrupar, spearman_matriz  # noqa: E402
 
 
 COMPARACAO = (
-    ROOT / "testeDiferencaSignificativa" / "dataset_gerado"
+    ROOT / "testeDiferencaSignificativa" / "resultados" / "dataset_gerado"
     / "comparacao_estresse.csv"
 )
 DATASET_ENTRADA = ROOT / "dataset" / "Unificada13052026_Limpa.csv"
 SAIDA_PADRAO = (
-    ROOT / "selecaoVariaveis" / "dataset_gerado"
+    ROOT / "selecaoVariaveis" / "resultados" / "dataset_gerado"
     / "experimento_spearman_por_dia"
 )
 

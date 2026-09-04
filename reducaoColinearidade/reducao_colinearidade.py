@@ -68,7 +68,7 @@ SAIDA_DIR = ROOT / "dataset_gerado"
 # do representante, e não de `diferencas_por_banda_dia.csv`, cujo efeito de
 # condição está marginalizado sobre os genótipos.
 COMPARACAO_ESTRESSE = (
-    ROOT.parent / "testeDiferencaSignificativa" / "dataset_gerado"
+    ROOT.parent / "testeDiferencaSignificativa" / "resultados" / "dataset_gerado"
     / "comparacao_estresse.csv"
 )
 

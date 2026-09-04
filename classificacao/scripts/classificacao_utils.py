@@ -42,10 +42,10 @@ SAIDA_DIR = CLASSIFICACAO_DIR / "outputs"
 # todas as amostras.
 GENOTIPO_REFERENCIA = "CD202"
 TOP5_GERAL_PATH = (
-    PROJECT_ROOT / "selecaoVariaveis" / "dataset_gerado" / GENOTIPO_REFERENCIA
+    PROJECT_ROOT / "selecaoVariaveis" / "resultados" / "dataset_gerado" / GENOTIPO_REFERENCIA
     / "top5_bandas.csv"
 )
-SELECAO_DIR = PROJECT_ROOT / "selecaoVariaveis" / "dataset_gerado"
+SELECAO_DIR = PROJECT_ROOT / "selecaoVariaveis" / "resultados" / "dataset_gerado"
 # Fonte antiga das bandas por genotipo: o ranking so por q_fdr de
 # `testeDiferencaSignificativa/testar_bandas_por_genotipo.py`. Fica como
 # fallback -- a fonte corrente e a Top 5 de `selecaoVariaveis`, que aplica os

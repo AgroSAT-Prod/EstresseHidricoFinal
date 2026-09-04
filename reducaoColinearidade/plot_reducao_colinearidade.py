@@ -58,7 +58,7 @@ sys.path.insert(0, str(ROOT.parent / "testeDeNormalidade"))
 from shapiro_normalidade import carregar  # noqa: E402
 
 DADOS = ROOT / "dataset_gerado"
-SELECAO = ROOT.parent / "selecaoVariaveis" / "dataset_gerado"
+SELECAO = ROOT.parent / "selecaoVariaveis" / "resultados" / "dataset_gerado"
 SAIDA = ROOT / "reducao_colinearidade.png"
 
 ESTAGIO = "normalizado"
