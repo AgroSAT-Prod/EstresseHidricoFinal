@@ -1,0 +1,4 @@
+data_etr;coleta_espectral;n;bandas_iniciais;bandas_spearman_p_lt_0001;intervalos_iplS_10nm;bandas_vip_ge_1;componentes;r2_ajuste;rmse_ajuste;r2_cv_bloco;rmse_cv_bloco;status
+23/02;D02M;24;2151;0;0;0;;;;;;"Sem bandas com Spearman p < 0,001; PLSR/VIP não ajustado."
+02/03;D09M;24;2151;1320;146;97;1.0;0.5206223328883726;21.60225639686547;0.489027965825105;22.30276885517556;Modelo ajustado
+03/03;D10M;24;2151;0;0;0;;;;;;"Sem bandas com Spearman p < 0,001; PLSR/VIP não ajustado."

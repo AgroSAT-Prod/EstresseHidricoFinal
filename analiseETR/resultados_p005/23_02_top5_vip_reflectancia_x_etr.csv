@@ -1,0 +1,2 @@
+data_etr;ordem_vip;banda_nm;vip_modelo_final;rho_spearman_etr;r2_ajuste;rmse_ajuste;r2_cv_bloco;rmse_cv_bloco
+23/02;1;352;1.0;0.4252173913043478;0.15698068971322976;31.33790393952401;-0.2872487686448111;38.72419747380544
