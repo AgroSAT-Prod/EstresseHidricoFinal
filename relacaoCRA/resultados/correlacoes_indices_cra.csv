@@ -1,0 +1,25 @@
+data_cra;indice;formula;descricao;n;pearson_r;pearson_p;spearman_rho;spearman_p;r2_linear;inclinacao
+24/02;WBI;R900 / R970;Índice de água foliar;24;0.460339;0.023599;0.460000;0.023715;0.211912;1763.225931
+24/02;SRWI;R860 / R1240;Índice de água de razão simples;24;0.274877;0.193622;0.212174;0.319571;0.075557;189.454108
+24/02;NDWI;(R860 − R1240) / (R860 + R1240);Índice normalizado de água;24;0.276085;0.191591;0.212174;0.319571;0.076223;408.534037
+24/02;Clorofila a (razão);R430 / R622;Proxy espectral de clorofila a;24;0.599825;0.001947;0.655652;0.000505;0.359790;43.316734
+24/02;Clorofila b (razão);R453 / R642;Proxy espectral de clorofila b;24;0.619012;0.001260;0.677391;0.000277;0.383176;60.588769
+24/02;MCARI (clorofila total);[(R700 − R670) − 0,2 × (R700 − R550)] × (R700 / R670);Índice de absorção de clorofila total;24;-0.561303;0.004320;-0.679130;0.000263;0.315061;-83.371580
+02/03;WBI;R900 / R970;Índice de água foliar;23;0.416973;0.047767;0.325099;0.130119;0.173867;3840.229821
+02/03;SRWI;R860 / R1240;Índice de água de razão simples;23;0.186309;0.394677;0.116601;0.596232;0.034711;262.102405
+02/03;NDWI;(R860 − R1240) / (R860 + R1240);Índice normalizado de água;23;0.187218;0.392332;0.116601;0.596232;0.035051;561.135206
+02/03;Clorofila a (razão);R430 / R622;Proxy espectral de clorofila a;23;0.915672;0.000000;0.817194;0.000002;0.838454;103.876401
+02/03;Clorofila b (razão);R453 / R642;Proxy espectral de clorofila b;23;0.920668;0.000000;0.850791;0.000000;0.847630;134.343672
+02/03;MCARI (clorofila total);[(R700 − R670) − 0,2 × (R700 − R550)] × (R700 / R670);Índice de absorção de clorofila total;23;-0.720091;0.000107;-0.666996;0.000509;0.518531;-199.150359
+03/03;WBI;R900 / R970;Índice de água foliar;24;0.134206;0.531830;0.138261;0.519391;0.018011;286.254782
+03/03;SRWI;R860 / R1240;Índice de água de razão simples;24;-0.081216;0.705981;0.034783;0.871817;0.006596;-49.345253
+03/03;NDWI;(R860 − R1240) / (R860 + R1240);Índice normalizado de água;24;-0.079872;0.710639;0.034783;0.871817;0.006380;-102.981224
+03/03;Clorofila a (razão);R430 / R622;Proxy espectral de clorofila a;24;0.245564;0.247432;0.276522;0.190861;0.060302;7.612912
+03/03;Clorofila b (razão);R453 / R642;Proxy espectral de clorofila b;24;0.160054;0.455017;0.182609;0.393075;0.025617;6.660029
+03/03;MCARI (clorofila total);[(R700 − R670) − 0,2 × (R700 − R550)] × (R700 / R670);Índice de absorção de clorofila total;24;-0.236627;0.265602;-0.334783;0.109804;0.055992;-16.586089
+Todas as datas (descritivo);WBI;R900 / R970;Índice de água foliar;71;0.236071;0.047482;0.234172;0.049349;0.055730;2316.618059
+Todas as datas (descritivo);SRWI;R860 / R1240;Índice de água de razão simples;71;-0.366105;0.001690;-0.376895;0.001196;0.134033;-574.398448
+Todas as datas (descritivo);NDWI;(R860 − R1240) / (R860 + R1240);Índice normalizado de água;71;-0.364915;0.001755;-0.376895;0.001196;0.133163;-1226.276172
+Todas as datas (descritivo);Clorofila a (razão);R430 / R622;Proxy espectral de clorofila a;71;0.488908;0.000015;0.448927;0.000086;0.239031;77.574260
+Todas as datas (descritivo);Clorofila b (razão);R453 / R642;Proxy espectral de clorofila b;71;0.511277;0.000005;0.462710;0.000048;0.261404;107.259807
+Todas as datas (descritivo);MCARI (clorofila total);[(R700 − R670) − 0,2 × (R700 − R550)] × (R700 / R670);Índice de absorção de clorofila total;71;-0.510108;0.000006;-0.458887;0.000057;0.260210;-173.866148
