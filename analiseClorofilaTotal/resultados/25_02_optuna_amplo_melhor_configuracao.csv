@@ -1,0 +1,2 @@
+alvo;n_trials;seed;r2_cv_anterior;r2_cv_optuna;delta_r2;rmse_cv_optuna;n_amostras;n_bandas_finais;representantes_spearman;limiar_spearman;janela_nm;componentes_pre;limiar_vip;componentes_finais
+CHL TOTAL (25.02);400;20260924;0.5306162312005123;0.6031976663560175;0.07258143515550519;1.4657489247595985;24;87;88;0.7085910932807665;25;8;0.600556804103746;3
