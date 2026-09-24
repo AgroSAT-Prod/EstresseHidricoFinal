@@ -1,0 +1,3 @@
+parametro;data;banda_nm;vip_modelo_final;rho_spearman;p_spearman;pearson_r;r2_linear;rmse_linear;n
+chltotal;25/02;703;1.449024;-0.646957;0.000634;-0.623289;0.388489;1.819594;24
+cra;02/03;734;1.102128;-0.854743;0.000000;-0.895910;0.802654;5.509587;23
