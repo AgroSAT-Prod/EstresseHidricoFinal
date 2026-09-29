@@ -1,0 +1,8 @@
+data;n_grupos;n_bandas_spearman;p_limiar_spearman;status;estrategia_selecao;n_bandas_finais;n_componentes;scale;bandas_nm;r2_ajuste;rmse_ajuste;r2_loo;rmse_loo
+02/03;6;0;0.001;Modelo ajustado;"iPLS em todas as bandas (exploratório; sem Spearman p < 0.001)";5;2;True;650, 640, 2290, 590, 519;0.9081986156785704;0.6870963162576972;0.638388280875609;1.3636855963676677
+03/03;6;0;0.001;Modelo ajustado;"iPLS em todas as bandas (exploratório; sem Spearman p < 0.001)";5;1;False;1342, 2239, 1360, 1129, 1580;0.21479495113351177;1.9586014822006055;-1.3208684091473417;3.3672843791836184
+23/02;6;0;0.001;Modelo ajustado;"iPLS em todas as bandas (exploratório; sem Spearman p < 0.001)";5;1;False;1296, 2260, 1100, 1659, 1240;0.8888563728486935;0.56488496122611;0.8198688509814297;0.7191378370762446
+24/02;6;0;0.001;Modelo ajustado;"iPLS em todas as bandas (exploratório; sem Spearman p < 0.001)";5;3;False;699, 770, 411, 1098, 423;0.9709973613985707;0.31355329405901106;-0.07897685059822135;1.9124878100254017
+25/02;6;0;0.001;Modelo ajustado;"iPLS em todas as bandas (exploratório; sem Spearman p < 0.001)";5;4;True;1109, 989, 539, 566, 930;0.9996238915615987;0.03535622186268605;0.9665668368140095;0.33334814737022683
+26/02;6;0;0.001;Modelo ajustado;"iPLS em todas as bandas (exploratório; sem Spearman p < 0.001)";5;2;False;435, 1160, 1580, 800, 730;0.7415595084277885;0.9364442495801611;0.11293818994176885;1.7349165465537928
+27/02;6;0;0.001;Modelo ajustado;"iPLS em todas as bandas (exploratório; sem Spearman p < 0.001)";5;1;True;447, 2350, 2306, 899, 2133;0.006767586830383809;1.8037454894646474;-1.3392946405329043;2.768166949286657

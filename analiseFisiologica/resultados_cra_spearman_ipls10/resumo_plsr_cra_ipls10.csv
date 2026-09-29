@@ -1,0 +1,2 @@
+n_grupos;n_bandas_testadas;n_bandas_spearman_p_lt_0_05;largura_janela_ipls_nm;n_bandas_finais;componentes_plsr;r2_ajuste_plsr;rmse_ajuste_plsr;r2_loo_plsr;rmse_loo_plsr
+18;2151;784;10;5;1;0.5995166330009558;10.864286495990893;0.49163634436451187;12.24041704228462

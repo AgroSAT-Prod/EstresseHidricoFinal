@@ -1,0 +1,2 @@
+n;p_limiar_spearman;n_bandas_spearman;bandas_nm;n_componentes;scale;r2_ajuste;rmse_ajuste;r2_loo;rmse_loo;pareamento
+24;0.05;1556;696, 2219, 619, 964, 389;4;False;0.7805422347404236;0.07668250798670309;0.6542069572125007;0.09625625436333395;ordem das 4 repetições fisiológicas mapeada para B1-B4

@@ -1,0 +1,10 @@
+dia;data_fisiologica;variavel_fisiologica;n_grupos;correlacao_pearson_r;r_quadrado
+D02;23/02;CHL_A;2;-1.0;1.0
+D02;23/02;CHL_B;2;-1.0;1.0
+D02;23/02;CHL_TOTAL;2;-1.0;1.0
+D06;27/02;CHL_A;2;1.0;1.0
+D06;27/02;CHL_B;2;-1.0;1.0
+D06;27/02;CHL_TOTAL;2;1.0;1.0
+D09;02/03;CHL_A;2;-1.0;1.0
+D09;02/03;CHL_B;2;-0.9999999999999999;0.9999999999999998
+D09;02/03;CHL_TOTAL;2;-1.0;1.0

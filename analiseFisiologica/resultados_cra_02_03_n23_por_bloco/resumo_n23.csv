@@ -1,0 +1,2 @@
+n;observacao_excluida;p_limiar_spearman;n_bandas_spearman;bandas_nm;n_componentes;scale;r2_ajuste;rmse_ajuste;r2_loo;rmse_loo;pareamento
+23;BR16, IRR, B1: CRA ausente;0.05;2064;1459, 1420, 1440, 1479, 1439;2;True;0.8968362204434068;3.983533691946993;0.8714147897867465;4.447340504745291;ordem original das repetições fisiológicas mapeada para B1-B4

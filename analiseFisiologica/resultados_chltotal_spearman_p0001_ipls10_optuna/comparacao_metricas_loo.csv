@@ -1,0 +1,3 @@
+modelo;n_bandas;n_componentes;bandas_nm;r2_loo;rmse_loo;delta_r2_vs_base;delta_rmse_vs_base
+PLSR base;5;5;698, 700, 530, 524, 545;0.4553539218459345;1.6424793395864954;0.0;0.0
+PLSR otimizado por Optuna;5;5;698, 700, 530, 524, 545;0.4553539218459345;1.6424793395864954;0.0;0.0

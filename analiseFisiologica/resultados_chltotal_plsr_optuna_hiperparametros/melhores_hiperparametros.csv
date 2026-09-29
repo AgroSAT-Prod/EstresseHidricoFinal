@@ -1,0 +1,2 @@
+n_trials;seed;bandas_nm;n_componentes;scale;tol;max_iter;r2_ajuste;rmse_ajuste;r2_loo;rmse_loo
+10;20260928;698, 700, 530, 524, 545;5;True;1e-06;500;0.6034595609013352;1.401478586839243;0.4553539218459345;1.6424793395864954

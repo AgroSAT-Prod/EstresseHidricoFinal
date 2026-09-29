@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="980" viewBox="0 0 1320 980">
+<rect width="100%" height="100%" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#1a202c}.title{font-size:24px;font-weight:bold}.panel{font-size:16px;font-weight:bold}.axis{font-size:13px}.note{font-size:12px;fill:#4a5568}</style>
+<text x="660" y="38" text-anchor="middle" class="title">R680 × clorofilas — genótipos agrupados</text>
+<text x="80" y="63" class="note">Espectros da manhã; 2 grupos por painel. Azul = irrigado; laranja = não irrigado.</text>
+<text x="275" y="84" text-anchor="middle" class="panel">Chl a</text>
+<text x="665" y="84" text-anchor="middle" class="panel">Chl b</text>
+<text x="1055" y="84" text-anchor="middle" class="panel">Chl total</text>
+<rect x="80" y="106" width="320" height="190" fill="#fff" stroke="#a0aec0"/>
+<text x="80" y="98" class="panel">D02 (23/02)</text>
+<text x="240.0" y="328" text-anchor="middle" class="axis">Reflectância em 680 nm</text>
+<text transform="translate(34,201.0) rotate(-90)" text-anchor="middle" class="axis">Chl a</text>
+<text x="80" y="310" class="note">0.051</text>
+<text x="400" y="310" text-anchor="end" class="note">0.053</text>
+<text x="73" y="296" text-anchor="end" class="note">29.2</text>
+<text x="73" y="110" text-anchor="end" class="note">31.1</text>
+<line x1="80.0" y1="106.0" x2="400.0" y2="296.0" stroke="#718096" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="400" y="123" text-anchor="end" class="note">r = -1.00; R² = 1.00</text>
+<circle cx="282.0" cy="244.6" r="6" fill="#2b6cb0" stroke="white" stroke-width="1.5"/>
+<circle cx="198.0" cy="157.4" r="6" fill="#c05621" stroke="white" stroke-width="1.5"/>
+<rect x="470" y="106" width="320" height="190" fill="#fff" stroke="#a0aec0"/>
+<text x="470" y="98" class="panel">D02 (23/02)</text>
+<text x="630.0" y="328" text-anchor="middle" class="axis">Reflectância em 680 nm</text>
+<text transform="translate(424,201.0) rotate(-90)" text-anchor="middle" class="axis">Chl b</text>
+<text x="470" y="310" class="note">0.051</text>
+<text x="790" y="310" text-anchor="end" class="note">0.053</text>
+<text x="463" y="296" text-anchor="end" class="note">7.4</text>
+<text x="463" y="110" text-anchor="end" class="note">8.9</text>
+<line x1="470.0" y1="106.0" x2="790.0" y2="296.0" stroke="#718096" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="790" y="123" text-anchor="end" class="note">r = -1.00; R² = 1.00</text>
+<circle cx="672.0" cy="231.8" r="6" fill="#2b6cb0" stroke="white" stroke-width="1.5"/>
+<circle cx="588.0" cy="170.2" r="6" fill="#c05621" stroke="white" stroke-width="1.5"/>
+<rect x="860" y="106" width="320" height="190" fill="#fff" stroke="#a0aec0"/>
+<text x="860" y="98" class="panel">D02 (23/02)</text>
+<text x="1020.0" y="328" text-anchor="middle" class="axis">Reflectância em 680 nm</text>
+<text transform="translate(814,201.0) rotate(-90)" text-anchor="middle" class="axis">Chl total</text>
+<text x="860" y="310" class="note">0.051</text>
+<text x="1180" y="310" text-anchor="end" class="note">0.053</text>
+<text x="853" y="296" text-anchor="end" class="note">37.1</text>
+<text x="853" y="110" text-anchor="end" class="note">39.5</text>
+<line x1="860.0" y1="106.0" x2="1180.0" y2="296.0" stroke="#718096" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="1180" y="123" text-anchor="end" class="note">r = -1.00; R² = 1.00</text>
+<circle cx="1062.0" cy="256.1" r="6" fill="#2b6cb0" stroke="white" stroke-width="1.5"/>
+<circle cx="978.0" cy="145.9" r="6" fill="#c05621" stroke="white" stroke-width="1.5"/>
+<rect x="80" y="376" width="320" height="190" fill="#fff" stroke="#a0aec0"/>
+<text x="80" y="368" class="panel">D06 (27/02)</text>
+<text x="240.0" y="598" text-anchor="middle" class="axis">Reflectância em 680 nm</text>
+<text transform="translate(34,471.0) rotate(-90)" text-anchor="middle" class="axis">Chl a</text>
+<text x="80" y="580" class="note">0.044</text>
+<text x="400" y="580" text-anchor="end" class="note">0.072</text>
+<text x="73" y="566" text-anchor="end" class="note">30.8</text>
+<text x="73" y="380" text-anchor="end" class="note">32.2</text>
+<line x1="80.0" y1="503.3" x2="400.0" y2="438.7" stroke="#718096" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="400" y="393" text-anchor="end" class="note">r = 1.00; R² = 1.00</text>
+<circle cx="369.0" cy="444.9" r="6" fill="#2b6cb0" stroke="white" stroke-width="1.5"/>
+<circle cx="111.0" cy="497.1" r="6" fill="#c05621" stroke="white" stroke-width="1.5"/>
+<rect x="470" y="376" width="320" height="190" fill="#fff" stroke="#a0aec0"/>
+<text x="470" y="368" class="panel">D06 (27/02)</text>
+<text x="630.0" y="598" text-anchor="middle" class="axis">Reflectância em 680 nm</text>
+<text transform="translate(424,471.0) rotate(-90)" text-anchor="middle" class="axis">Chl b</text>
+<text x="470" y="580" class="note">0.044</text>
+<text x="790" y="580" text-anchor="end" class="note">0.072</text>
+<text x="463" y="566" text-anchor="end" class="note">8.3</text>
+<text x="463" y="380" text-anchor="end" class="note">9.3</text>
+<line x1="470.0" y1="461.3" x2="790.0" y2="480.7" stroke="#718096" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="790" y="393" text-anchor="end" class="note">r = -1.00; R² = 1.00</text>
+<circle cx="759.0" cy="478.8" r="6" fill="#2b6cb0" stroke="white" stroke-width="1.5"/>
+<circle cx="501.0" cy="463.2" r="6" fill="#c05621" stroke="white" stroke-width="1.5"/>
+<rect x="860" y="376" width="320" height="190" fill="#fff" stroke="#a0aec0"/>
+<text x="860" y="368" class="panel">D06 (27/02)</text>
+<text x="1020.0" y="598" text-anchor="middle" class="axis">Reflectância em 680 nm</text>
+<text transform="translate(814,471.0) rotate(-90)" text-anchor="middle" class="axis">Chl total</text>
+<text x="860" y="580" class="note">0.044</text>
+<text x="1180" y="580" text-anchor="end" class="note">0.072</text>
+<text x="853" y="566" text-anchor="end" class="note">39.7</text>
+<text x="853" y="380" text-anchor="end" class="note">40.9</text>
+<line x1="860.0" y1="493.4" x2="1180.0" y2="448.6" stroke="#718096" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="1180" y="393" text-anchor="end" class="note">r = 1.00; R² = 1.00</text>
+<circle cx="1149.0" cy="452.9" r="6" fill="#2b6cb0" stroke="white" stroke-width="1.5"/>
+<circle cx="891.0" cy="489.1" r="6" fill="#c05621" stroke="white" stroke-width="1.5"/>
+<rect x="80" y="646" width="320" height="190" fill="#fff" stroke="#a0aec0"/>
+<text x="80" y="638" class="panel">D09 (02/03)</text>
+<text x="240.0" y="868" text-anchor="middle" class="axis">Reflectância em 680 nm</text>
+<text transform="translate(34,741.0) rotate(-90)" text-anchor="middle" class="axis">Chl a</text>
+<text x="80" y="850" class="note">0.047</text>
+<text x="400" y="850" text-anchor="end" class="note">0.063</text>
+<text x="73" y="836" text-anchor="end" class="note">30.7</text>
+<text x="73" y="650" text-anchor="end" class="note">32.3</text>
+<line x1="80.0" y1="694.7" x2="400.0" y2="787.3" stroke="#718096" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="400" y="663" text-anchor="end" class="note">r = -1.00; R² = 1.00</text>
+<circle cx="369.0" cy="778.3" r="6" fill="#2b6cb0" stroke="white" stroke-width="1.5"/>
+<circle cx="111.0" cy="703.7" r="6" fill="#c05621" stroke="white" stroke-width="1.5"/>
+<rect x="470" y="646" width="320" height="190" fill="#fff" stroke="#a0aec0"/>
+<text x="470" y="638" class="panel">D09 (02/03)</text>
+<text x="630.0" y="868" text-anchor="middle" class="axis">Reflectância em 680 nm</text>
+<text transform="translate(424,741.0) rotate(-90)" text-anchor="middle" class="axis">Chl b</text>
+<text x="470" y="850" class="note">0.047</text>
+<text x="790" y="850" text-anchor="end" class="note">0.063</text>
+<text x="463" y="836" text-anchor="end" class="note">8.3</text>
+<text x="463" y="650" text-anchor="end" class="note">10.2</text>
+<line x1="470.0" y1="685.0" x2="790.0" y2="797.0" stroke="#718096" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="790" y="663" text-anchor="end" class="note">r = -1.00; R² = 1.00</text>
+<circle cx="759.0" cy="786.2" r="6" fill="#2b6cb0" stroke="white" stroke-width="1.5"/>
+<circle cx="501.0" cy="695.8" r="6" fill="#c05621" stroke="white" stroke-width="1.5"/>
+<rect x="860" y="646" width="320" height="190" fill="#fff" stroke="#a0aec0"/>
+<text x="860" y="638" class="panel">D09 (02/03)</text>
+<text x="1020.0" y="868" text-anchor="middle" class="axis">Reflectância em 680 nm</text>
+<text transform="translate(814,741.0) rotate(-90)" text-anchor="middle" class="axis">Chl total</text>
+<text x="860" y="850" class="note">0.047</text>
+<text x="1180" y="850" text-anchor="end" class="note">0.063</text>
+<text x="853" y="836" text-anchor="end" class="note">39.5</text>
+<text x="853" y="650" text-anchor="end" class="note">42.0</text>
+<line x1="860.0" y1="669.5" x2="1180.0" y2="812.5" stroke="#718096" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="1180" y="663" text-anchor="end" class="note">r = -1.00; R² = 1.00</text>
+<circle cx="1149.0" cy="798.7" r="6" fill="#2b6cb0" stroke="white" stroke-width="1.5"/>
+<circle cx="891.0" cy="683.3" r="6" fill="#c05621" stroke="white" stroke-width="1.5"/>
+</svg>

@@ -1,0 +1,2 @@
+n_grupos;n_bandas_testadas;n_bandas_spearman_p_lt_0_05;largura_intervalo_nm;limiar_abs_correlacao_pearson;n_bandas_finais;componentes_plsr_final;r2_ajuste;rmse_ajuste;r2_loo;rmse_loo;max_abs_correlacao_pearson_entre_bandas;media_abs_correlacao_pearson_entre_bandas
+18;2151;784;20;0.8;5;5;0.7207400753332762;9.07221379295198;0.4080733306805716;13.208178261190708;0.7288046276012875;0.4741212561473683

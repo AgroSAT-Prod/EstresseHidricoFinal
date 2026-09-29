@@ -1,0 +1,2 @@
+n;datas;p_limiar_spearman;n_bandas_spearman;bandas_nm;n_componentes;scale;r2_ajuste;rmse_ajuste;r2_loo;rmse_loo;pareamento
+71;24/02, 02/03, 03/03;0.05;1970;1230, 2099, 1879, 2410, 1690;4;False;0.5179121479377282;12.288632147120381;0.44730858042066457;13.157755476625299;"ordem das repetições fisiológicas mapeada para B1-B4; CRA de BR16/IRR/B1 ausente em 02/03"

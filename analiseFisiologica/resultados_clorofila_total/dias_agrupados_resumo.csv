@@ -1,0 +1,2 @@
+n_grupos_dia_genotipo_condicao;n_bandas_testadas;n_bandas_spearman_p_lt_0_05;componentes_plsr;r2_ajuste_plsr;rmse_loo_plsr;n_bandas_vip_ge_1
+42;2151;123;3;0.5547999330088853;1.6882109675009125;23
