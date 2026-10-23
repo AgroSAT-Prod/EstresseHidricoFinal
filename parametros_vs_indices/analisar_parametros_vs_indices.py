@@ -18,6 +18,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
+from matplotlib.ticker import MaxNLocator
 import numpy as np
 import pandas as pd
 from scipy.stats import linregress, pearsonr, spearmanr
@@ -263,25 +264,24 @@ def graficos_agrupados(dados: pd.DataFrame, parametro: str, saida: Path) -> None
                 parte = pares_validos(por_data.loc[por_data["condicao"].eq(condicao)], indice)
                 cor = CORES_CONDICOES[condicao]
                 ax.scatter(parte[indice], parte["valor"], color=cor, s=35, marker="o", alpha=.9)
-                for _, ponto in parte.iterrows():
-                    ax.annotate(ponto["bloco"], (ponto[indice], ponto["valor"]),
-                                xytext=(4, 5 if condicao == "IRRIG" else -11),
-                                textcoords="offset points", color=cor, fontsize=7)
-            ax.set(title=f"{data} · {coleta}", xlabel=indice, ylabel=parametro)
+            ax.set_title(f"{data} · {coleta}", fontsize=16, fontweight="semibold")
+            ax.set_xlabel(indice, fontsize=14)
+            ax.set_ylabel(parametro, fontsize=14)
+            # Compartilhar as escalas não deve ocultar os valores nos painéis internos.
+            ax.tick_params(axis="both", labelbottom=True, labelleft=True, labelsize=12)
+            ax.xaxis.set_major_locator(MaxNLocator(nbins=4))
+            ax.yaxis.set_major_locator(MaxNLocator(nbins=4))
+            ax.xaxis.get_offset_text().set_fontsize(12)
+            ax.yaxis.get_offset_text().set_fontsize(12)
             ax.margins(x=.12, y=.15)
             ax.grid(alpha=.25)
         legenda = eixos.flat[7]
         legenda.axis("off")
         handles = [Line2D([], [], color=CORES_CONDICOES[c], marker="o", linestyle="none",
                           label=ROTULOS_CONDICOES[c]) for c in CONDICOES]
-        legenda.legend(handles=handles, loc="upper center", frameon=False)
-        legenda.text(.5, .35, "Cada ponto = parcela (B1–B4).\n"
-                     "Os três genótipos compartilham o mesmo eixo.\n"
-                     "As cores identificam as condições.\n"
-                     "As correlações exportadas reúnem\nas duas condições da data.",
-                     ha="center", va="center", transform=legenda.transAxes, fontsize=10)
-        fig.suptitle(f"{parametro} × {indice}", fontsize=16)
-        fig.text(.5, .935, INDICES[indice]["formula"], ha="center", fontsize=11)
+        legenda.legend(handles=handles, loc="center", frameon=False, fontsize=14)
+        fig.suptitle(f"{parametro} × {indice}", fontsize=22, fontweight="semibold")
+        fig.text(.5, .935, INDICES[indice]["formula"], ha="center", fontsize=15)
         fig.tight_layout(rect=(0, 0, 1, .91))
         salvar_figura(fig, saida / "agrupados" / PARAMETROS[parametro] / indice.lower())
 
@@ -317,14 +317,17 @@ def grafico_heatmap(tabela: pd.DataFrame, parametro: str, saida: Path) -> None:
     ax.grid(False)
     ax.set_xticks(range(len(ordem)), [*COLETAS, "Todas as datas\n(descritivo)"])
     ax.set_yticks(range(len(INDICES)), list(INDICES))
+    ax.tick_params(axis="both", labelsize=13)
     for i in range(len(INDICES)):
         for j in range(len(ordem)):
             valor = matriz.iat[i, j]
             ax.text(j, i, f"{valor:.2f}" if np.isfinite(valor) else "ND", ha="center", va="center",
-                    color="white" if np.isfinite(valor) and abs(valor) > .55 else "black")
+                    color="white" if np.isfinite(valor) and abs(valor) > .55 else "black", fontsize=12)
     ax.axvline(len(COLETAS) - .5, color="black", linewidth=1.5)
-    ax.set_title(f"{parametro} — Spearman por data\nTrês genótipos e duas condições reunidos")
-    fig.colorbar(imagem, ax=ax, label="ρ de Spearman")
+    ax.set_title(f"{parametro} — correlação de Spearman por data", fontsize=18, fontweight="semibold")
+    barra = fig.colorbar(imagem, ax=ax)
+    barra.set_label("ρ de Spearman", fontsize=14)
+    barra.ax.tick_params(labelsize=12)
     fig.tight_layout()
     salvar_figura(fig, saida / "heatmaps" / PARAMETROS[parametro])
 

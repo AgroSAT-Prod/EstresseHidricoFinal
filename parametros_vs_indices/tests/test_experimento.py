@@ -199,6 +199,9 @@ class GraficosTest(unittest.TestCase):
                     self.assertEqual(ax.get_title(), f"{data} · {coleta}")
                     self.assertEqual(len(ax.collections), 2)
                     self.assertEqual(len(ax.lines), 0)
+                    self.assertFalse(ax.texts)
+                    self.assertTrue(ax.get_xticklabels())
+                    self.assertTrue(ax.get_yticklabels())
                     self.assertTrue(ax.get_shared_x_axes().joined(ax, fig.axes[0]))
                     self.assertTrue(ax.get_shared_y_axes().joined(ax, fig.axes[0]))
                     for pontos, condicao in zip(ax.collections, experimento.CONDICOES):
@@ -208,6 +211,7 @@ class GraficosTest(unittest.TestCase):
                         np.testing.assert_allclose(pontos.get_offsets(),
                                                    esperado[[indice, "valor"]].to_numpy(float))
                         np.testing.assert_allclose(pontos.get_paths()[0].vertices, circulo.vertices)
+                self.assertFalse(fig.axes[7].texts)
             finally:
                 experimento.plt.close(fig)
 

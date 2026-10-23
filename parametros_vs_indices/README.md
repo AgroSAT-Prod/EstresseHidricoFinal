@@ -113,8 +113,11 @@ A remoção se limita aos nomes de arquivos produzidos pelo experimento.
 Cada imagem fixa um índice para determinado parâmetro e reúne **sete painéis
 de datas**, em ordem cronológica e com escalas compartilhadas. **BR16, CD202 e
 EMB48 ficam juntos no mesmo eixo**, todos com marcadores circulares. A cor
-identifica irrigados e não irrigados. Cada ponto é uma parcela identificada
-por bloco. Os gráficos mostram somente pontos, sem linhas de tendência.
+identifica irrigados e não irrigados. Cada ponto representa uma parcela, sem
+rótulos individuais B1–B4; a identificação dos blocos permanece nos CSVs.
+Os gráficos mostram somente pontos, sem linhas de tendência ou texto explicativo
+dentro das imagens. Os valores dos eixos aparecem em todos os painéis, com
+fontes ampliadas nos títulos, nomes dos eixos e valores numéricos.
 Os coeficientes da regressão linear e o R² permanecem nas tabelas estatísticas,
 assim como as correlações e p-valores, reunindo todos os genótipos e ambas as
 condições, com 24 parcelas por data.
