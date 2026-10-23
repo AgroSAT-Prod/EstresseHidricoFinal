@@ -9,3 +9,4 @@ scikit-learn==1.9.0
 scipy==1.18.0
 six==1.17.0
 threadpoolctl==3.6.0
+xgboost-cpu==3.4.1
