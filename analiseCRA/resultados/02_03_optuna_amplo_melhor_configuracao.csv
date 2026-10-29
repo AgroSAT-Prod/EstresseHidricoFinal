@@ -1,0 +1,2 @@
+alvo;n_trials;seed;r2_cv_anterior;r2_cv_optuna;delta_r2;rmse_cv_optuna;n_amostras;n_bandas_finais;representantes_spearman;limiar_spearman;janela_nm;componentes_pre;limiar_vip;componentes_finais
+CRA (02/03);400;20260924;0.7710516170237192;0.9230684840251351;0.15201686700141592;3.4399887127054636;23;199;302;0.8724544275487232;7;7;0.9488581872048591;8

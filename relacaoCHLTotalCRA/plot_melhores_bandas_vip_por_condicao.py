@@ -32,7 +32,17 @@ ANALISES = {
         "rotulo_parametro": "CHLTotal observada",
         "arquivo": "chltotal_25_02_melhor_banda_vip_por_condicao",
     },
-    "cra": {
+    "cra_24_02": {
+        "titulo": "CRA em 24/02: relação com a melhor banda VIP",
+        "ranking": ROOT / "analiseCRA" / "resultados" / "24_02_bandas_vip_ge_1.csv",
+        "coluna_rho": "rho_spearman_cra",
+        "dia_espectral": "D03M",
+        "coluna_parametro": "CRA (24/02)",
+        "rotulo_parametro": "CRA observada (%)",
+        "arquivo": "cra_24_02_melhor_banda_vip_por_condicao",
+        "data": "24/02",
+    },
+    "cra_02_03": {
         "titulo": "CRA em 02/03: relação com a melhor banda VIP",
         "ranking": ROOT / "analiseCRA" / "resultados" / "02_03_bandas_vip_ge_1.csv",
         "coluna_rho": "rho_spearman_cra",
@@ -40,6 +50,17 @@ ANALISES = {
         "coluna_parametro": "CRA (02/03)",
         "rotulo_parametro": "CRA observada (%)",
         "arquivo": "cra_02_03_melhor_banda_vip_por_condicao",
+        "data": "02/03",
+    },
+    "cra_03_03": {
+        "titulo": "CRA em 03/03: relação com a melhor banda VIP",
+        "ranking": ROOT / "analiseCRA" / "resultados" / "03_03_bandas_vip_ge_1.csv",
+        "coluna_rho": "rho_spearman_cra",
+        "dia_espectral": "D10M",
+        "coluna_parametro": "CRA (03/03)",
+        "rotulo_parametro": "CRA observada (%)",
+        "arquivo": "cra_03_03_melhor_banda_vip_por_condicao",
+        "data": "03/03",
     },
 }
 
@@ -90,12 +111,13 @@ def plotar(nome: str, config: dict) -> dict:
     xx = np.linspace(x.min(), x.max(), 100)
     ax.plot(xx, reg.predict(xx.reshape(-1, 1)), "--", color="#333333", linewidth=1.3,
             label="Regressão linear")
-    ax.text(.03, .97,
-            f"Banda selecionada: {banda_nm} nm; VIP final = {banda['vip_modelo_final']:.3f}\n"
-            f"ρ Spearman = {spearman.statistic:.3f}; p = {spearman.pvalue:.4f}; R² = {r2_score(y, predito):.3f}",
+    ax.text(.03, .97, f"Banda selecionada: {banda_nm} nm\nR² = {r2_score(y, predito):.3f}",
             transform=ax.transAxes, va="top", ha="left", fontsize=14,
             bbox={"boxstyle": "round,pad=.35", "facecolor": "white", "edgecolor": "#666", "alpha": .94})
     ax.set(xlabel=f"Reflectância em {banda_nm} nm", ylabel=config["rotulo_parametro"], title=config["titulo"])
+    if nome.startswith("cra"):
+        ax.xaxis.label.set_fontsize(18); ax.xaxis.label.set_fontweight("bold")
+        ax.yaxis.label.set_fontsize(18); ax.yaxis.label.set_fontweight("bold")
     ax.grid(alpha=.22)
     ax.legend(title="Condição", frameon=True, loc="lower right", fontsize=14, title_fontsize=14)
     fig.tight_layout()
@@ -104,7 +126,7 @@ def plotar(nome: str, config: dict) -> dict:
     plt.close(fig)
     dados.to_csv(SAIDA / f"{config['arquivo']}_dados.csv", sep=";", index=False, float_format="%.8f")
     return {
-        "parametro": nome, "data": "25/02" if nome == "chltotal" else "02/03", "banda_nm": banda_nm,
+        "parametro": nome, "data": config.get("data", "25/02"), "banda_nm": banda_nm,
         "vip_modelo_final": banda["vip_modelo_final"], "rho_spearman": spearman.statistic,
         "p_spearman": spearman.pvalue, "pearson_r": pearson.statistic, "r2_linear": r2_score(y, predito),
         "rmse_linear": mean_squared_error(y, predito) ** .5, "n": len(dados),

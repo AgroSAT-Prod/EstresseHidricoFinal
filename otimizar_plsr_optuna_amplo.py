@@ -23,6 +23,16 @@ from reducao_colinearidade import agrupar, spearman_matriz  # noqa: E402
 FISIO = ROOT / "ParametrosFisiologicos.xlsx"
 ESPECTROS = ROOT / "dataset" / "Unificada13052026_Limpa.csv"
 CONFIGS = {
+    "cra_24_02": {
+        "out": ROOT / "analiseCRA" / "resultados",
+        "arquivo": "24_02",
+        "alvo": "CRA (24/02)",
+        "dia": "D03M",
+        "rotulo": "24/02",
+        "col_data": "data_cra",
+        "col_rho": "rho_spearman_cra",
+        "r2_anterior": 0.374478449123115,
+    },
     "chltotal_25_02": {
         "out": ROOT / "analiseClorofilaTotal" / "resultados",
         "arquivo": "25_02",
@@ -43,6 +53,16 @@ CONFIGS = {
         "col_rho": "rho_spearman_cra",
         "r2_anterior": 0.7710516170237192,
     },
+    "cra_03_03": {
+        "out": ROOT / "analiseCRA" / "resultados",
+        "arquivo": "03_03",
+        "alvo": "CRA (03/03)",
+        "dia": "D10M",
+        "rotulo": "03/03",
+        "col_data": "data_cra",
+        "col_rho": "rho_spearman_cra",
+        "r2_anterior": -0.1372477902050726,
+    },
 }
 N_TRIALS = 400
 SEED = 20260924
@@ -61,7 +81,8 @@ def carregar(config):
     fis["genotipo"] = fis["Genótipo"]
     fis["bloco"] = fis.groupby(["genotipo", "condicao"], sort=False).cumcount().map(lambda n: f"B{n + 1}")
     esp = pd.read_csv(ESPECTROS, sep=";", decimal=",")
-    bandas = np.array([int(col) for col in esp.columns if col.isdigit()])
+    # A análise espectral é restrita ao intervalo a partir de 400 nm.
+    bandas = np.array([int(col) for col in esp.columns if col.isdigit() and int(col) >= 400])
     meta = ["bloco", "genotipo", "condicao"]
     medias = esp.loc[(esp.data_coleta == config["dia"]) & (esp.turno == "manha")].groupby(
         meta, as_index=False
@@ -73,9 +94,8 @@ def carregar(config):
     return dados, X, y, dados["bloco"].to_numpy(), bandas
 
 
-def selecionar(X, y, bandas, corr, limiar_r, janela_nm, n_pre, limiar_vip):
+def selecionar(X, y, bandas, corr, ry, limiar_r, janela_nm, n_pre, limiar_vip):
     grupos_rho = agrupar(corr, bandas, limiar_r=limiar_r, janela_nm=janela_nm)
-    ry = np.array([pd.Series(X[:, j]).corr(pd.Series(y), method="spearman") for j in range(X.shape[1])])
     reps = []
     for grupo in np.unique(grupos_rho):
         idx = np.flatnonzero(grupos_rho == grupo)
@@ -101,6 +121,9 @@ def predicao_cv(X, y, grupos, n_componentes):
 def executar(config):
     dados, X, y, grupos, bandas = carregar(config)
     corr = spearman_matriz(X)
+    # Esta correlação só depende dos dados da coleta, não dos hiperparâmetros.
+    # Calculá-la uma vez evita 2.151 correlações redundantes por tentativa.
+    ry = np.array([pd.Series(X[:, j]).corr(pd.Series(y), method="spearman") for j in range(X.shape[1])])
     cache = {}
 
     def objetivo(trial):
@@ -109,7 +132,7 @@ def executar(config):
         n_pre = trial.suggest_int("componentes_pre", 1, 8)
         limiar_vip = trial.suggest_float("limiar_vip", 0.50, 1.50)
         try:
-            Xs, _, _, _, _ = selecionar(X, y, bandas, corr, limiar_r, janela_nm, n_pre, limiar_vip)
+            Xs, _, _, _, _ = selecionar(X, y, bandas, corr, ry, limiar_r, janela_nm, n_pre, limiar_vip)
             limite = min(8, Xs.shape[1], min(len(idx) - 1 for idx, _ in GroupKFold(n_splits=4).split(Xs, y, grupos)))
             if limite < 1:
                 raise ValueError("nenhuma banda elegível")
@@ -128,7 +151,7 @@ def executar(config):
     study.optimize(objetivo, n_trials=N_TRIALS, show_progress_bar=False)
     melhores = study.best_params
     Xs, bs, rhos, vips_pre, n_reps = selecionar(
-        X, y, bandas, corr, melhores["limiar_spearman"], melhores["janela_nm"],
+        X, y, bandas, corr, ry, melhores["limiar_spearman"], melhores["janela_nm"],
         melhores["componentes_pre"], melhores["limiar_vip"],
     )
     n_final = melhores["componentes_finais"]
@@ -166,8 +189,12 @@ def executar(config):
 
 def main():
     optuna.logging.set_verbosity(optuna.logging.WARNING)
-    for config in CONFIGS.values():
-        executar(config)
+    solicitadas = sys.argv[1:] or list(CONFIGS)
+    invalidas = set(solicitadas).difference(CONFIGS)
+    if invalidas:
+        raise SystemExit(f"Alvos desconhecidos: {', '.join(sorted(invalidas))}")
+    for nome in solicitadas:
+        executar(CONFIGS[nome])
 
 
 if __name__ == "__main__":

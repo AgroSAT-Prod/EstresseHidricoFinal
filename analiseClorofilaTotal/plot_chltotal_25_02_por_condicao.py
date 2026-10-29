@@ -37,7 +37,7 @@ def main() -> None:
             "--", color="#333333", linewidth=1.2, label="1:1")
     r2_total = r2_score(dados[OBSERVADO], dados["predito_cv"])
     rmse_total = mean_squared_error(dados[OBSERVADO], dados["predito_cv"]) ** .5
-    ax.text(.03, .97, f"Todos os dados: R² CV = {r2_total:.3f}\nRMSE = {rmse_total:.3f}",
+    ax.text(.03, .97, f"R² CV = {r2_total:.3f}\nRMSE = {rmse_total:.3f}",
             transform=ax.transAxes, va="top", ha="left",
             fontsize=15,
             bbox={"boxstyle": "round,pad=.35", "facecolor": "white", "edgecolor": "#666", "alpha": .94})
