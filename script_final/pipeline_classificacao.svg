@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1100" viewBox="0 0 1400 1100">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#55718a" stroke-width="2"/></marker></defs>
+<rect width="1400" height="1100" fill="#f5f8fc"/>
+<text x="90" y="73" font-family="Arial,sans-serif" font-size="38" font-weight="700" fill="#16324c">Pipeline de classificação espectral</text>
+<text x="90" y="110" font-family="Arial,sans-serif" font-size="20" fill="#547086">IRRIG × NIRRIG  ·  um modelo por dia  ·  três genótipos reunidos</text>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<rect x="360" y="145" width="680" height="84" rx="18" fill="#e6eef6" stroke="#bed0df"/><text x="700" y="179" font-size="23" font-weight="700" fill="#183c58">Dados espectrais + metadados</text><text x="700" y="207" font-size="17" fill="#48677e">Unificada13052026.csv · bloco, genótipo, condição, dia</text>
+<path d="M700 229 V257" stroke="#55718a" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="300" y="260" width="800" height="105" rx="18" fill="#dceeea" stroke="#a9d2c7"/><text x="700" y="296" font-size="23" font-weight="700" fill="#164d43">Limpeza e pré-processamento</text><text x="700" y="326" font-size="17" fill="#356b60">metadados · 400–2450 nm · correção de emendas · interpolação</text><text x="700" y="349" font-size="17" fill="#356b60">Savitzky–Golay (11, grau 2) · SNV por espectro</text>
+<path d="M700 365 V394" stroke="#55718a" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="360" y="397" width="680" height="78" rx="18" fill="#e6eef6" stroke="#bed0df"/><text x="700" y="428" font-size="22" font-weight="700" fill="#183c58">Somente manhã → separar por dia</text><text x="700" y="456" font-size="17" fill="#48677e">classe positiva: NIRRIG · grupos de validação: quatro blocos</text>
+<path d="M700 475 V543" stroke="#55718a" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="250" y="546" width="900" height="411" rx="22" fill="#fff" stroke="#b9d7ef" stroke-width="2"/>
+<text x="700" y="586" font-size="24" font-weight="700" fill="#166097">XGBoost base</text>
+<text x="700" y="625" font-size="18" fill="#31546d">1. GroupKFold: deixar um bloco fora</text>
+<text x="700" y="657" font-size="18" fill="#31546d">2. No treino: Spearman entre bandas vizinhas</text>
+<text x="700" y="682" font-size="16" fill="#577488">|ρ| &gt; 0,80 · ligação completa · extensão &lt; 10 nm</text>
+<text x="700" y="714" font-size="18" fill="#31546d">3. Banda central de cada grupo</text>
+<text x="700" y="746" font-size="18" fill="#31546d">4. Random Forest → importância Gini → Top 5</text>
+<text x="700" y="778" font-size="18" fill="#31546d">5. Treinar XGBoost e prever bloco excluído</text>
+<path d="M330 801 H1070" stroke="#d6e5f0" stroke-width="2"/>
+<text x="700" y="839" font-size="18" font-weight="700" fill="#166097">Ajuste final por dia</text>
+<text x="700" y="870" font-size="17" fill="#31546d">Spearman + RF em todas as leituras do dia</text>
+<text x="700" y="898" font-size="17" fill="#31546d">Top 5 descritivo → XGBoost final</text>
+<path d="M700 957 V989" stroke="#55718a" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="166" y="992" width="1068" height="78" rx="18" fill="#163c59"/><text x="700" y="1023" font-size="22" font-weight="700" fill="#fff">Predições fora do treino e métricas por dia</text><text x="700" y="1051" font-size="17" fill="#d4e7f4">acurácia · acurácia balanceada · precisão · sensibilidade · F1 · AUC-ROC · matriz de confusão</text>
+</g></svg>

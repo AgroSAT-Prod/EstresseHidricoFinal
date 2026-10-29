@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1220" viewBox="0 0 1400 1220">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#55718a" stroke-width="2"/></marker></defs>
+<rect width="1400" height="1220" fill="#f5f8fc"/>
+<text x="90" y="73" font-family="Arial,sans-serif" font-size="38" font-weight="700" fill="#16324c">Pipeline de predição fisiológica</text>
+<text x="90" y="110" font-family="Arial,sans-serif" font-size="20" fill="#547086">PLSR por parâmetro × data · CHL total, clorofilas A/B, gs, CRA, ETR e E</text>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<rect x="95" y="148" width="555" height="112" rx="19" fill="#e6eef6" stroke="#bed0df"/><text x="372" y="186" font-size="23" font-weight="700" fill="#183c58">Espectros + metadados</text><text x="372" y="216" font-size="17" fill="#48677e">Unificada13052026.csv</text><text x="372" y="242" font-size="16" fill="#48677e">somente coletas matinais</text>
+<rect x="750" y="148" width="555" height="112" rx="19" fill="#e6eef6" stroke="#bed0df"/><text x="1027" y="186" font-size="23" font-weight="700" fill="#183c58">Medidas fisiológicas</text><text x="1027" y="216" font-size="17" fill="#48677e">ParametrosFisiologicos.xlsx</text><text x="1027" y="242" font-size="16" fill="#48677e">alvo medido em cada data</text>
+<path d="M372 260 V295 M1027 260 V417" stroke="#55718a" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="95" y="298" width="555" height="112" rx="19" fill="#dceeea" stroke="#a9d2c7"/><text x="372" y="334" font-size="22" font-weight="700" fill="#164d43">Pré-processamento espectral</text><text x="372" y="364" font-size="16" fill="#356b60">400–2450 nm · emendas · interpolação</text><text x="372" y="389" font-size="16" fill="#356b60">Savitzky–Golay (11, grau 2) · SNV</text>
+<path d="M372 410 V445" stroke="#55718a" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="95" y="448" width="555" height="84" rx="19" fill="#dceeea" stroke="#a9d2c7"/><text x="372" y="483" font-size="22" font-weight="700" fill="#164d43">Média espectral por parcela</text><text x="372" y="511" font-size="16" fill="#356b60">bloco × genótipo × condição × data</text>
+<path d="M650 490 H685 V562 H700 M1027 417 V562 H700 V585" fill="none" stroke="#55718a" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="200" y="588" width="1000" height="79" rx="19" fill="#e6eef6" stroke="#bed0df"/><text x="700" y="619" font-size="22" font-weight="700" fill="#183c58">Parear espectros e medidas por parcela e data</text><text x="700" y="647" font-size="17" fill="#48677e">excluir apenas valores ausentes do alvo naquela data</text>
+<path d="M700 667 V699" stroke="#55718a" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="200" y="702" width="1000" height="88" rx="19" fill="#e8f3ef" stroke="#b4d7c7"/><text x="700" y="735" font-size="22" font-weight="700" fill="#165b4a">Redução de bandas por Spearman</text><text x="700" y="764" font-size="17" fill="#366c5d">grupos contíguos: |ρ| &gt; 0,80 · ligação completa · extensão &lt; 10 nm</text>
+<path d="M700 790 V820" stroke="#55718a" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="200" y="823" width="1000" height="80" rx="19" fill="#e8f3ef" stroke="#b4d7c7"/><text x="700" y="855" font-size="22" font-weight="700" fill="#165b4a">Uma representante por grupo</text><text x="700" y="883" font-size="17" fill="#366c5d">banda com maior |ρ| de Spearman em relação ao alvo</text>
+<path d="M700 903 V933" stroke="#55718a" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="95" y="936" width="555" height="103" rx="19" fill="#e8eafa" stroke="#bfc5ec"/><text x="372" y="971" font-size="21" font-weight="700" fill="#3b4b9b">PLSR inicial nas representantes</text><text x="372" y="1001" font-size="16" fill="#5865a0">até 5 componentes · menor RMSE</text><text x="372" y="1025" font-size="16" fill="#5865a0">em validação por bloco</text>
+<rect x="750" y="936" width="555" height="103" rx="19" fill="#f7e9f6" stroke="#e2c1df"/><text x="1027" y="971" font-size="21" font-weight="700" fill="#8a467f">VIP → Top 5 bandas</text><text x="1027" y="1001" font-size="16" fill="#955b8b">VIP calculado no PLSR inicial</text><text x="1027" y="1025" font-size="16" fill="#955b8b">cinco maiores para aquela data</text>
+<path d="M650 986 H747" stroke="#55718a" stroke-width="3" marker-end="url(#arrow)"/>
+<path d="M1027 1039 V1070 H700 V1091" fill="none" stroke="#55718a" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="200" y="1094" width="1000" height="84" rx="19" fill="#163c59"/><text x="700" y="1126" font-size="22" font-weight="700" fill="#fff">PLSR final com Top 5 · componentes por RMSE CV por bloco</text><text x="700" y="1156" font-size="17" fill="#d4e7f4">R² e RMSE de ajuste e CV · predições ao deixar um bloco fora</text>
+<text x="700" y="1203" font-size="16" fill="#87552d">Nota: seleção de bandas e componentes usa a data inteira antes das dobras; CV diagnóstica.</text>
+</g></svg>
