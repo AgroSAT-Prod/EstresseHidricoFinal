@@ -1,0 +1,9 @@
+"""Shared font sizes for classification figures (points)."""
+
+PANEL_TITLE_SIZE = 16
+AXIS_TITLE_SIZE = 15
+COMPACT_AXIS_TITLE_SIZE = 14
+TICK_LABEL_SIZE = 13
+LEGEND_SIZE = 13
+BAR_VALUE_SIZE = 13
+MATRIX_VALUE_SIZE = 15
